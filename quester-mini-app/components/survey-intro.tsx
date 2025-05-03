@@ -21,7 +21,7 @@ export function SurveyIntro({ onNext }: SurveyIntro) {
           <Sparkles className="h-10 w-10 text-primary" />
         </div>
         <h1 className="text-2xl font-bold text-primary-foreground mb-1">
-          SurveyPulse
+          Quester
         </h1>
         <p className="text-primary-foreground/80 text-sm">
           Insights from the community

@@ -14,7 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Settings } from "lucide-react";
+import { Settings, Trash2, Plus } from "lucide-react";
 
 export type AnswerType = "text" | "single-choice" | "multiple-choice";
 
@@ -207,7 +207,9 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
                 placeholder="Enter an option"
                 className="bg-background text-foreground text-xs "
               />
-              <Button onClick={handleAddOption}>Add Option</Button>
+              <Button onClick={handleAddOption}>
+                <Plus className="w-4 h-4" />
+              </Button>
             </div>
           </div>
           <div className="space-y-2">
@@ -219,10 +221,10 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
                   className="bg-background text-foreground text-xs "
                 />
                 <Button
-                  variant="destructive"
+                  variant="secondary"
                   onClick={() => handleRemoveOption(index)}
                 >
-                  Remove
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             ))}
@@ -230,7 +232,12 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
         </div>
       )}
 
-      <Button className="w-full" onClick={handleNext} disabled={isNextDisabled}>
+      <Button
+        className="w-full text-foreground"
+        variant="outline"
+        onClick={handleNext}
+        disabled={isNextDisabled}
+      >
         Add Question
       </Button>
     </div>
