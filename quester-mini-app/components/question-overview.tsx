@@ -86,13 +86,6 @@ export function QuestionOverview({
           </div>
         </div>
       ))}
-      <Button
-        className="w-full"
-        onClick={onComplete}
-        disabled={questions.length === 0}
-      >
-        Continue to Targeting
-      </Button>
     </div>
   );
 }

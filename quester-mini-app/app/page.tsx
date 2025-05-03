@@ -37,8 +37,18 @@ import { QuestionOverview } from "@/components/question-overview";
 import { type AudienceRule } from "@/components/rule-form";
 import { Check } from "lucide-react";
 import { mockSurveyQuestions } from "@/app/mock-data/questions";
+import { ProgressTracker } from "@/components/progress-tracker";
+import { SurveyIntro } from "@/components/survey-intro";
 
-type Step = "questions" | "audience" | "fund" | "overview";
+export type Step = "intro" | "questions" | "audience" | "fund" | "overview";
+
+const steps: { id: Step; label: string }[] = [
+  { id: "intro", label: "Welcome" },
+  { id: "questions", label: "Survey" },
+  { id: "audience", label: "Audience" },
+  { id: "fund", label: "Settings" },
+  { id: "overview", label: "Overview" },
+];
 
 export default function App() {
   const { setFrameReady, isFrameReady, context } = useMiniKit();
@@ -48,7 +58,7 @@ export default function App() {
   const addFrame = useAddFrame();
   const openUrl = useOpenUrl();
 
-  const [currentStep, setCurrentStep] = useState<Step>("questions");
+  const [currentStep, setCurrentStep] = useState<Step>("intro");
   const [questions, setQuestions] =
     useState<SurveyQuestionType[]>(mockSurveyQuestions);
   const [audienceTarget, setAudienceTarget] = useState<AudienceTarget>({
@@ -136,6 +146,8 @@ export default function App() {
       setCurrentStep("audience");
     } else if (currentStep === "overview") {
       setCurrentStep("fund");
+    } else if (currentStep === "questions") {
+      setCurrentStep("intro");
     }
   };
 
@@ -147,12 +159,16 @@ export default function App() {
     setQuestions(questions.filter((_, i) => i !== index));
   };
 
+  const handleIntroNext = () => {
+    setCurrentStep("questions");
+  };
+
   return (
     <div className="flex flex-col min-h-screen font-sans text-[var(--app-foreground)] mini-app-theme from-[var(--app-background)] to-[var(--app-gray)]">
       <div className="w-full max-w-md mx-auto px-4 py-3">
         <header className="flex justify-between items-center mb-3">
           <div>
-            {currentStep !== "questions" && (
+            {currentStep !== "intro" && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -166,16 +182,28 @@ export default function App() {
           <div>{saveFrameButton()}</div>
         </header>
 
+        <ProgressTracker currentStep={currentStep} steps={steps} />
+
         <main className="flex-1">
+          {currentStep === "intro" && <SurveyIntro onNext={handleIntroNext} />}
           {currentStep === "questions" && (
-            <div className="space-y-6">
-              <SurveyQuestion onNext={handleQuestionNext} />
+            <div className="space-y-4">
               {questions.length > 0 && (
                 <QuestionOverview
                   questions={questions}
                   onDeleteQuestion={handleDeleteQuestion}
                   onComplete={handleQuestionsComplete}
                 />
+              )}
+              <SurveyQuestion onNext={handleQuestionNext} />
+              {questions.length > 0 && (
+                <Button
+                  className="w-full"
+                  onClick={handleQuestionsComplete}
+                  disabled={questions.length === 0}
+                >
+                  Continue to Targeting
+                </Button>
               )}
             </div>
           )}
