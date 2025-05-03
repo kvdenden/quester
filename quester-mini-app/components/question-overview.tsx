@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { SurveyQuestion as SurveyQuestionType } from "@/components/survey-question";
+import { Badge } from "@/components/ui/badge";
 
-interface QuestionOverviewProps {
+export interface QuestionOverviewProps {
   questions: SurveyQuestionType[];
   onDeleteQuestion: (index: number) => void;
   onComplete: () => void;
@@ -13,43 +14,76 @@ export function QuestionOverview({
   onDeleteQuestion,
   onComplete,
 }: QuestionOverviewProps) {
+  const getQuestionTypeLabel = (type: string) => {
+    switch (type) {
+      case "multiple-choice":
+        return "Multi";
+      case "single-choice":
+        return "Single";
+      case "text":
+        return "Text";
+      default:
+        return type;
+    }
+  };
+
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-muted-foreground">
-        Survey Questions
-      </h2>
       {questions.map((question, index) => (
-        <div key={index} className="p-4 border rounded-lg relative group">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={() => onDeleteQuestion(index)}
-          >
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-          <div className="font-medium text-muted-foreground">
-            Question {index + 1}
+        <div key={index} className="p-4 border rounded-lg">
+          <div className="flex items-start gap-2">
+            <div className="flex-1 min-w-0">
+              <div className="font-bold text-foreground break-words">
+                {question.question}
+              </div>
+              {question.description && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  {question.description}
+                </div>
+              )}
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onDeleteQuestion(index)}
+            >
+              <Trash2 className="text-muted-foreground" />
+            </Button>
           </div>
-          <div className="mt-1 text-muted-foreground">{question.question}</div>
-          {question.description && (
-            <div className="text-sm text-muted-foreground mt-1">
-              {question.description}
+          <div className="flex gap-2 items-start mt-4">
+            {question.answerType === "text" && (
+              <div className="w-full">
+                <div className="text-xs font-medium text-muted-foreground mb-1">
+                  # characters
+                </div>
+                <Badge className="text-xs" variant="secondary">
+                  min {question.minChars} - max {question.maxChars}
+                </Badge>
+              </div>
+            )}
+            {question.options && question.options.length > 0 && (
+              <div>
+                <div className="text-xs font-medium text-muted-foreground mb-1">
+                  Answer options
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {question.options.map((option, optionIndex) => (
+                    <Badge variant="secondary" key={optionIndex}>
+                      {option}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div>
+              <div className="text-xs font-medium text-muted-foreground mb-1">
+                Type
+              </div>
+              <Badge variant="outline" className="text-xs">
+                {getQuestionTypeLabel(question.answerType)}
+              </Badge>
             </div>
-          )}
-          <div className="text-sm text-muted-foreground mt-1">
-            Type: {question.answerType}
           </div>
-          {question.answerType === "text" && (
-            <div className="text-sm text-muted-foreground">
-              Character limits: {question.minChars} - {question.maxChars}
-            </div>
-          )}
-          {question.options && question.options.length > 0 && (
-            <div className="text-sm text-muted-foreground mt-1">
-              Options: {question.options.join(", ")}
-            </div>
-          )}
         </div>
       ))}
       <Button
@@ -57,7 +91,7 @@ export function QuestionOverview({
         onClick={onComplete}
         disabled={questions.length === 0}
       >
-        Continue to Audience Targeting
+        Continue to Targeting
       </Button>
     </div>
   );

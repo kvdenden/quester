@@ -36,6 +36,7 @@ import { SurveyOverview } from "@/components/survey-overview";
 import { QuestionOverview } from "@/components/question-overview";
 import { type AudienceRule } from "@/components/rule-form";
 import { Check } from "lucide-react";
+import { mockSurveyQuestions } from "@/app/mock-data/questions";
 
 type Step = "questions" | "audience" | "fund" | "overview";
 
@@ -48,7 +49,8 @@ export default function App() {
   const openUrl = useOpenUrl();
 
   const [currentStep, setCurrentStep] = useState<Step>("questions");
-  const [questions, setQuestions] = useState<SurveyQuestionType[]>([]);
+  const [questions, setQuestions] =
+    useState<SurveyQuestionType[]>(mockSurveyQuestions);
   const [audienceTarget, setAudienceTarget] = useState<AudienceTarget>({
     rules: [],
   });
