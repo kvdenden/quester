@@ -102,15 +102,23 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
                           setAnswerType(value)
                         }
                       >
-                        <SelectTrigger className="bg-background text-foreground">
-                          <SelectValue placeholder="Select answer type" />
+                        <SelectTrigger className="bg-background text-xs text-foreground ">
+                          <SelectValue
+                            placeholder="Select answer type"
+                            className="text-xs"
+                          />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="text">Text</SelectItem>
-                          <SelectItem value="single-choice">
+                          <SelectItem className="text-xs" value="text">
+                            Text
+                          </SelectItem>
+                          <SelectItem className="text-xs" value="single-choice">
                             Single Choice
                           </SelectItem>
-                          <SelectItem value="multiple-choice">
+                          <SelectItem
+                            className="text-xs"
+                            value="multiple-choice"
+                          >
                             Multiple Choice
                           </SelectItem>
                         </SelectContent>
@@ -130,7 +138,7 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
                               e: React.ChangeEvent<HTMLInputElement>,
                             ) => setMinChars(Number(e.target.value))}
                             min={0}
-                            className="bg-background text-foreground"
+                            className="bg-background text-foreground text-xs"
                           />
                         </div>
                         <div className="space-y-2">
@@ -144,7 +152,7 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
                               e: React.ChangeEvent<HTMLInputElement>,
                             ) => setMaxChars(Number(e.target.value))}
                             min={minChars}
-                            className="bg-background text-foreground"
+                            className="bg-background text-foreground text-xs"
                           />
                         </div>
                       </div>
@@ -166,7 +174,7 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
             setQuestion(e.target.value)
           }
           placeholder="Enter your question"
-          className="bg-background text-foreground"
+          className="bg-background text-foreground text-xs "
         />
       </div>
 
@@ -180,7 +188,7 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
             setDescription(e.target.value)
           }
           placeholder="Add a description (optional)"
-          className="bg-background text-foreground"
+          className="bg-background text-foreground text-xs "
         />
       </div>
 
@@ -197,7 +205,7 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
                   setNewOption(e.target.value)
                 }
                 placeholder="Enter an option"
-                className="bg-background text-foreground"
+                className="bg-background text-foreground text-xs "
               />
               <Button onClick={handleAddOption}>Add Option</Button>
             </div>
@@ -208,7 +216,7 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
                 <Input
                   value={option}
                   readOnly
-                  className="bg-background text-foreground"
+                  className="bg-background text-foreground text-xs "
                 />
                 <Button
                   variant="destructive"

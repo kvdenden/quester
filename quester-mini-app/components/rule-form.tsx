@@ -54,14 +54,16 @@ export function RuleForm({ selectedAccount, onAddRule }: RuleFormProps) {
             setRelationship(value as "follows" | "followed_by")
           }
         >
-          <SelectTrigger>
+          <SelectTrigger className="text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="followed_by">
+            <SelectItem className="text-xs" value="followed_by">
               Their followers (people who follow them)
             </SelectItem>
-            <SelectItem value="follows">Accounts they follow</SelectItem>
+            <SelectItem className="text-xs" value="follows">
+              Accounts they follow
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -74,12 +76,16 @@ export function RuleForm({ selectedAccount, onAddRule }: RuleFormProps) {
             setInclusion(value as "include" | "exclude")
           }
         >
-          <SelectTrigger>
+          <SelectTrigger className="text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="include">Include these users</SelectItem>
-            <SelectItem value="exclude">Exclude these users</SelectItem>
+            <SelectItem className="text-xs" value="include">
+              Include these users
+            </SelectItem>
+            <SelectItem className="text-xs" value="exclude">
+              Exclude these users
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>

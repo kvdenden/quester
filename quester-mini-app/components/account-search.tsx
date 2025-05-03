@@ -115,7 +115,7 @@ export function AccountSearch({
         <Input
           type="search"
           placeholder="Search by username or display name..."
-          className="pl-8"
+          className="pl-8 text-xs"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
