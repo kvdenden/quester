@@ -4,14 +4,6 @@ import { useMiniKit, useAddFrame } from "@coinbase/onchainkit/minikit";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
-import { useRouter } from "next/navigation";
-import {
-  ArrowRight,
-  CheckCircle,
-  Sparkles,
-  Target,
-  TrendingUp,
-} from "lucide-react";
 import SurveyFeed from "./SurveyFeed";
 
 export type Step = "intro" | "questions" | "audience" | "fund" | "overview";
@@ -20,7 +12,6 @@ export default function Surveys() {
   const { setFrameReady, isFrameReady, context } = useMiniKit();
   const [frameAdded, setFrameAdded] = useState(false);
   const addFrame = useAddFrame();
-  const router = useRouter();
 
   useEffect(() => {
     if (!isFrameReady) {
