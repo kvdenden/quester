@@ -1,77 +1,25 @@
 "use client";
 
-import {
-  useMiniKit,
-  useAddFrame,
-  useOpenUrl,
-} from "@coinbase/onchainkit/minikit";
-import {
-  Name,
-  Identity,
-  Address,
-  Avatar,
-  EthBalance,
-} from "@coinbase/onchainkit/identity";
-import {
-  ConnectWallet,
-  Wallet,
-  WalletDropdown,
-  WalletDropdownDisconnect,
-} from "@coinbase/onchainkit/wallet";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useMiniKit, useAddFrame } from "@coinbase/onchainkit/minikit";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  AudienceTargeting,
-  type AudienceTarget,
-} from "@/components/audience-targeting";
-import {
-  SurveyQuestion,
-  type SurveyQuestion as SurveyQuestionType,
-} from "@/components/survey-question";
-import {
-  SurveyFunding,
-  type SurveyFunding as SurveyFundingType,
-} from "@/components/survey-funding";
-import { SurveyOverview } from "@/components/survey-overview";
-import { QuestionOverview } from "@/components/question-overview";
-import { type AudienceRule } from "@/components/rule-form";
 import { Check } from "lucide-react";
-import { mockSurveyQuestions } from "@/app/mock-data/questions";
-import { ProgressTracker } from "@/components/progress-tracker";
-import { SurveyIntro } from "@/components/survey-intro";
+import { useRouter } from "next/navigation";
+import {
+  ArrowRight,
+  CheckCircle,
+  Sparkles,
+  Target,
+  TrendingUp,
+} from "lucide-react";
 
 export type Step = "intro" | "questions" | "audience" | "fund" | "overview";
-
-const steps: { id: Step; label: string }[] = [
-  { id: "intro", label: "Welcome" },
-  { id: "questions", label: "Survey" },
-  { id: "audience", label: "Audience" },
-  { id: "fund", label: "Settings" },
-  { id: "overview", label: "Overview" },
-];
 
 export default function App() {
   const { setFrameReady, isFrameReady, context } = useMiniKit();
   const [frameAdded, setFrameAdded] = useState(false);
-  const [activeTab, setActiveTab] = useState("home");
-
   const addFrame = useAddFrame();
-  const openUrl = useOpenUrl();
-
-  const [currentStep, setCurrentStep] = useState<Step>("intro");
-  const [questions, setQuestions] =
-    useState<SurveyQuestionType[]>(mockSurveyQuestions);
-  const [audienceTarget, setAudienceTarget] = useState<AudienceTarget>({
-    rules: [],
-  });
-  const [funding, setFunding] = useState<SurveyFundingType>({
-    maxResponses: 0,
-    rewardAmount: 0,
-    currency: "",
-    contractApproved: false,
-    contractFunded: false,
-  });
-  const [isExecuting, setIsExecuting] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (!isFrameReady) {
@@ -110,127 +58,72 @@ export default function App() {
     return null;
   };
 
-  const handleQuestionNext = (question: SurveyQuestionType) => {
-    setQuestions([...questions, question]);
-  };
-
-  const handleQuestionsComplete = () => {
-    setCurrentStep("audience");
-  };
-
-  const handleAudienceNext = () => {
-    setCurrentStep("fund");
-  };
-
-  const handleFundingNext = () => {
-    setCurrentStep("overview");
-  };
-
-  const handleExecuteSurvey = async () => {
-    setIsExecuting(true);
-    try {
-      // TODO: Implement survey execution logic
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulated delay
-      // Handle successful execution
-    } catch (error) {
-      console.error("Error executing survey:", error);
-    } finally {
-      setIsExecuting(false);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep === "audience") {
-      setCurrentStep("questions");
-    } else if (currentStep === "fund") {
-      setCurrentStep("audience");
-    } else if (currentStep === "overview") {
-      setCurrentStep("fund");
-    } else if (currentStep === "questions") {
-      setCurrentStep("intro");
-    }
-  };
-
-  const updateAudienceTarget = (newTarget: AudienceTarget) => {
-    setAudienceTarget(newTarget);
-  };
-
-  const handleDeleteQuestion = (index: number) => {
-    setQuestions(questions.filter((_, i) => i !== index));
-  };
-
-  const handleIntroNext = () => {
-    setCurrentStep("questions");
-  };
-
   return (
-    <div className="flex flex-col min-h-screen font-sans text-[var(--app-foreground)] mini-app-theme from-[var(--app-background)] to-[var(--app-gray)]">
-      <div className="w-full max-w-md mx-auto px-4 py-3">
-        <header className="flex justify-between items-center mb-3">
-          <div>
-            {currentStep !== "intro" && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBack}
-                className="text-[var(--app-accent)] p-4"
-              >
-                Back
-              </Button>
-            )}
+    <div className="flex flex-col min-h-screen w-full">
+      <div>{saveFrameButton()}</div>
+
+      {/* App logo/header */}
+      <div className="bg-primary py-12 px-6 text-center">
+        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+          <Sparkles className="h-10 w-10 text-primary" />
+        </div>
+        <h1 className="text-2xl font-bold text-primary-foreground mb-1">
+          Quester
+        </h1>
+        <p className="text-primary-foreground/80 text-sm">
+          Insights from the community
+        </p>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 p-6 space-y-8 bg-background text-center">
+        <div>
+          <h2 className="text-xl font-bold text-foreground mb-2">
+            Discover valuable insights
+          </h2>
+          <p className="text-muted-foreground">
+            Create engaging surveys and get thoughtful responses from an active
+            community of builders and enthusiasts.
+          </p>
+        </div>
+
+        {/* Features */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-center gap-3">
+            <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+            <p className="text-foreground">
+              Gather strategic market intelligence
+            </p>
           </div>
-          <div>{saveFrameButton()}</div>
-        </header>
 
-        <ProgressTracker currentStep={currentStep} steps={steps} />
+          <div className="flex items-center gap-3 justify-center">
+            <Target className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+            <p className="text-foreground">
+              Validate product ideas with feedback
+            </p>
+          </div>
 
-        <main className="flex-1">
-          {currentStep === "intro" && <SurveyIntro onNext={handleIntroNext} />}
-          {currentStep === "questions" && (
-            <div className="space-y-4">
-              {questions.length > 0 && (
-                <QuestionOverview
-                  questions={questions}
-                  onDeleteQuestion={handleDeleteQuestion}
-                  onComplete={handleQuestionsComplete}
-                />
-              )}
-              <SurveyQuestion onNext={handleQuestionNext} />
-              {questions.length > 0 && (
-                <Button
-                  className="w-full"
-                  onClick={handleQuestionsComplete}
-                  disabled={questions.length === 0}
-                >
-                  Continue to Targeting
-                </Button>
-              )}
-            </div>
-          )}
-          {currentStep === "audience" && (
-            <AudienceTargeting
-              audienceTarget={audienceTarget}
-              onUpdate={updateAudienceTarget}
-              onNext={handleAudienceNext}
-            />
-          )}
-          {currentStep === "fund" && (
-            <SurveyFunding
-              funding={funding}
-              onUpdate={setFunding}
-              onNext={handleFundingNext}
-            />
-          )}
-          {currentStep === "overview" && (
-            <SurveyOverview
-              questions={questions}
-              audienceTarget={audienceTarget}
-              funding={funding}
-              onExecute={handleExecuteSurvey}
-              isExecuting={isExecuting}
-            />
-          )}
-        </main>
+          <div className="flex items-center gap-3 justify-center">
+            <TrendingUp className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+            <p className="text-foreground">Discover trends early</p>
+          </div>
+        </div>
+
+        {/* CTA Button */}
+        <div className="pt-4">
+          <Button
+            onClick={() => router.push("/create")}
+            className="w-full py-6 text-lg"
+            size="lg"
+          >
+            Get Started
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </div>
+
+        <p className="text-sm text-muted-foreground text-center pt-2">
+          Join thousands of users already creating impactful surveys
+        </p>
       </div>
     </div>
   );

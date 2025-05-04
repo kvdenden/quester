@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,15 +7,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
-
+import { TokenChip } from "@coinbase/onchainkit/token";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import "@coinbase/onchainkit/styles.css";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { tokenOptions } from "@/app/mock-data/tokens";
 export interface SurveyFunding {
   maxResponses: number;
   rewardAmount: number;
-  currency: string;
-  contractApproved: boolean;
-  contractFunded: boolean;
+  tokenAddress: string;
+  endDate: Date;
+  tokenSymbol: string;
 }
 
 interface SurveyFundingProps {
@@ -30,9 +37,6 @@ export function SurveyFunding({
   onUpdate,
   funding,
 }: SurveyFundingProps) {
-  const [isApproving, setIsApproving] = useState(false);
-  const [isFunding, setIsFunding] = useState(false);
-
   const handleMaxResponsesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onUpdate({
       ...funding,
@@ -47,138 +51,118 @@ export function SurveyFunding({
     });
   };
 
-  const handleCurrencyChange = (value: string) => {
+  const handleTokenChange = (value: string) => {
     onUpdate({
       ...funding,
-      currency: value,
-      contractApproved: false,
-      contractFunded: false,
+      tokenAddress: value,
+      tokenSymbol:
+        tokenOptions.find((token) => token.address === value)?.symbol || "",
     });
   };
 
-  const handleApproveContract = async () => {
-    setIsApproving(true);
-    try {
-      // TODO: Implement contract approval logic
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulated delay
-      onUpdate({
-        ...funding,
-        contractApproved: true,
-      });
-    } catch (error) {
-      console.error("Error approving contract:", error);
-    } finally {
-      setIsApproving(false);
-    }
+  const handleDateChange = (date: Date | undefined) => {
+    onUpdate({
+      ...funding,
+      endDate: date || new Date(),
+    });
   };
 
-  const handleFundContract = async () => {
-    setIsFunding(true);
-    try {
-      // TODO: Implement contract funding logic
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulated delay
-      onUpdate({
-        ...funding,
-        contractFunded: true,
-      });
-    } catch (error) {
-      console.error("Error funding contract:", error);
-    } finally {
-      setIsFunding(false);
-    }
-  };
-
-  const isNextDisabled = !funding.contractFunded || !funding.contractApproved;
+  const isNextDisabled =
+    !funding.maxResponses ||
+    !funding.rewardAmount ||
+    !funding.tokenAddress ||
+    !funding.endDate;
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Survey Funding</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">
-              Maximum Number of Responses
-            </label>
+    <div className="space-y-4 text-foreground">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">
+            Select amount to distribute
+          </label>
+          <div className="flex gap-2 items-center">
             <Input
               type="number"
-              value={funding.maxResponses}
-              onChange={handleMaxResponsesChange}
-              min={1}
-              placeholder="Enter maximum number of responses"
+              value={funding.rewardAmount || ""}
+              onChange={handleRewardAmountChange}
+              step={0.01}
+              placeholder="Enter reward amount"
+              className="text-xs"
             />
+            <Select
+              value={funding.tokenAddress}
+              onValueChange={handleTokenChange}
+            >
+              <SelectTrigger className="w-[180px]  text-xs">
+                <SelectValue
+                  placeholder="Select token"
+                  className="text-xs text-foreground"
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {tokenOptions.map((token) => (
+                  <SelectItem
+                    key={token.symbol}
+                    value={token.address}
+                    className="text-white text-xs"
+                  >
+                    <TokenChip
+                      token={token}
+                      className="text-foreground bg-white shadow-none"
+                    />
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">
-              Reward Amount per Response
-            </label>
-            <div className="flex gap-2">
-              <Input
-                type="number"
-                value={funding.rewardAmount}
-                onChange={handleRewardAmountChange}
-                min={0}
-                step={0.01}
-                placeholder="Enter reward amount"
-              />
-              <Select
-                value={funding.currency}
-                onValueChange={handleCurrencyChange}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select currency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ETH">ETH</SelectItem>
-                  <SelectItem value="USDC">USDC</SelectItem>
-                  <SelectItem value="USDT">USDT</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="text-sm font-medium">Contract Actions</div>
-            <div className="space-y-2">
-              <Button
-                className="w-full"
-                onClick={handleApproveContract}
-                disabled={funding.contractApproved || !funding.currency}
-              >
-                {isApproving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Approving...
-                  </>
-                ) : funding.contractApproved ? (
-                  "Contract Approved"
-                ) : (
-                  "Approve Contract"
-                )}
-              </Button>
-
-              <Button
-                className="w-full"
-                onClick={handleFundContract}
-                disabled={!funding.contractApproved || funding.contractFunded}
-              >
-                {isFunding ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Funding...
-                  </>
-                ) : funding.contractFunded ? (
-                  "Contract Funded"
-                ) : (
-                  "Fund Contract"
-                )}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">
+            Maximum Number of Responses
+          </label>
+          <Input
+            type="number"
+            value={funding.maxResponses || ""}
+            onChange={handleMaxResponsesChange}
+            min={1}
+            placeholder="Enter maximum number of responses"
+            className="text-xs"
+          />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Survey End Date</label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal text-xs",
+                !funding.endDate && "text-muted-foreground",
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {funding.endDate ? (
+                funding.endDate.toLocaleDateString()
+              ) : (
+                <span>Select end date</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={funding.endDate}
+              onSelect={handleDateChange}
+              initialFocus
+              disabled={(date) => date < new Date()}
+            />
+          </PopoverContent>
+        </Popover>
+        <p className="text-xs text-muted-foreground">
+          The survey will automatically close on this date.
+        </p>
+      </div>
 
       <Button className="w-full" onClick={onNext} disabled={isNextDisabled}>
         Continue to Overview

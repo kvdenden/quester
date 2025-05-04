@@ -1,18 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Info } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { AccountSearch, FarcasterAccount } from "./account-search";
 import { RuleForm, AudienceRule } from "./rule-form";
 import { RuleList } from "./rule-list";
-import { TargetingTips } from "./targeting-tips";
 
 export interface AudienceTarget {
   rules: AudienceRule[];
@@ -115,37 +107,24 @@ export function AudienceTargeting({
     });
   };
 
-  console.log(selectedAccount, "selected account");
-
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader className="pb-2 flex justify-between items-center w-full">
-          <CardTitle className="text-lg w-full">
-            <AccountSearch
-              onSelectAccount={setSelectedAccount}
-              selectedAccount={selectedAccount}
-              onClearSelection={() => setSelectedAccount(null)}
-            />
-
-            {/* <TargetingTips /> */}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <RuleForm
-            selectedAccount={selectedAccount}
-            onAddRule={handleAddRule}
-          />
-        </CardContent>
-      </Card>
+    <div className="space-y-4">
+      <div className="text-foreground ">
+        <AccountSearch
+          onSelectAccount={setSelectedAccount}
+          selectedAccount={selectedAccount}
+          onClearSelection={() => setSelectedAccount(null)}
+        />
+      </div>
+      <div className="text-foreground ">
+        <RuleForm selectedAccount={selectedAccount} onAddRule={handleAddRule} />
+      </div>
 
       <RuleList
         rules={audienceTarget.rules}
         onRemoveRule={handleRemoveRule}
         estimatedAudience={estimatedAudience}
       />
-
-      {/* <TargetingTips /> */}
 
       <Button className="w-full" onClick={onNext}>
         Next

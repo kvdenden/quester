@@ -12,7 +12,6 @@ export interface QuestionOverviewProps {
 export function QuestionOverview({
   questions,
   onDeleteQuestion,
-  onComplete,
 }: QuestionOverviewProps) {
   const getQuestionTypeLabel = (type: string) => {
     switch (type) {
@@ -62,7 +61,7 @@ export function QuestionOverview({
               </div>
             )}
             {question.options && question.options.length > 0 && (
-              <div>
+              <div className="w-full">
                 <div className="text-xs font-medium text-muted-foreground mb-1">
                   Answer options
                 </div>

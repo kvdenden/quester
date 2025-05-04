@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 export interface FarcasterAccount {
@@ -110,16 +110,13 @@ export function AccountSearch({
       <div className="text-sm font-medium">
         1. Search for a Farcaster account
       </div>
-      <div className="relative">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search by username or display name..."
-          className="pl-8 text-xs"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
+      <Input
+        type="text"
+        placeholder="Rish"
+        className="text-xs"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
 
       {searchResults.length > 0 && (
         <Card className="overflow-hidden mt-1">
