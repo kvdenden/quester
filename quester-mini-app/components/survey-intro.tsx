@@ -66,7 +66,7 @@ export function SurveyIntro({ onNext }: SurveyIntro) {
             size="lg"
           >
             <span className="relative z-10 flex items-center justify-center">
-              Create survey
+              Start Your Survey
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </span>
             <span className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity" />
