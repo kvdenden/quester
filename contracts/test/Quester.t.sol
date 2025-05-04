@@ -112,8 +112,114 @@ contract QuesterTest is Test {
     );
   }
 
-  function test_ClaimReward() public { }
+  function test_ClaimReward() public {
+    // Setup
+    uint256 rewardAmount = 1000;
+    uint256 submissionLimit = 2;
+    address user = address(0x123);
 
+    // Create quest
+    bytes32 questId = _createQuest(rewardAmount, submissionLimit);
+
+    // Setup validator to accept the submission
+    bytes32 submissionId = keccak256("valid-submission");
+    validator.setValidationResult(true);
+
+    // Claim reward
+    vm.prank(user);
+    quester.claimReward(questId, submissionId);
+
+    // Verify quest state
+    Quester.Quest memory quest = quester.getQuest(questId);
+    _assertQuestProperties(
+      quest,
+      creator,
+      address(validator),
+      address(rewardToken),
+      rewardAmount,
+      submissionLimit,
+      1
+    );
+
+    // Verify user received reward
+    assertEq(rewardToken.balanceOf(user), rewardAmount, "User should receive reward");
+    assertEq(rewardToken.balanceOf(address(quester)), rewardAmount, "Contract should have remaining rewards");
+  }
+
+  function test_ClaimReward_NonExistentQuest() public {
+    // Setup
+    bytes32 nonExistentQuestId = keccak256("non-existent");
+    bytes32 submissionId = keccak256("submission");
+
+    // Should revert with "Quest does not exist"
+    vm.expectRevert("Quest does not exist");
+    quester.claimReward(nonExistentQuestId, submissionId);
+  }
+
+  function test_ClaimReward_SubmissionLimitReached() public {
+    // Setup
+    uint256 rewardAmount = 1000;
+    uint256 submissionLimit = 1;
+    address user1 = address(0x123);
+    address user2 = address(0x456);
+
+    // Create quest
+    bytes32 questId = _createQuest(rewardAmount, submissionLimit);
+
+    // Setup validator to accept submissions
+    validator.setValidationResult(true);
+
+    // First claim should succeed
+    vm.prank(user1);
+    quester.claimReward(questId, keccak256("submission1"));
+
+    // Second claim should fail
+    vm.prank(user2);
+    vm.expectRevert("Quest submission limit reached");
+    quester.claimReward(questId, keccak256("submission2"));
+  }
+
+  function test_ClaimReward_DuplicateSubmission() public {
+    // Setup
+    uint256 rewardAmount = 1000;
+    uint256 submissionLimit = 2;
+    address user = address(0x123);
+
+    // Create quest
+    bytes32 questId = _createQuest(rewardAmount, submissionLimit);
+
+    // Setup validator to accept the submission
+    bytes32 submissionId = keccak256("submission");
+    validator.setValidationResult(true);
+
+    // First claim should succeed
+    vm.prank(user);
+    quester.claimReward(questId, submissionId);
+
+    // Second claim with same submission ID should fail
+    vm.prank(user);
+    vm.expectRevert("Submission already claimed");
+    quester.claimReward(questId, submissionId);
+  }
+
+  function test_ClaimReward_InvalidSubmission() public {
+    // Setup
+    uint256 rewardAmount = 1000;
+    uint256 submissionLimit = 1;
+    address user = address(0x123);
+
+    // Create quest
+    bytes32 questId = _createQuest(rewardAmount, submissionLimit);
+
+    // Setup validator to reject the submission
+    bytes32 submissionId = keccak256("submission");
+    validator.setValidationResult(false);
+
+    // Claim should fail due to invalid submission
+    vm.prank(user);
+    vm.expectRevert("Submission is invalid");
+    quester.claimReward(questId, submissionId);
+  }
 
   // Helper functions
 
