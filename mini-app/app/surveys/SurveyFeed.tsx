@@ -155,7 +155,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: false,
   },
   {
-    id: "survey-123",
+    id: "survey-124",
     title: "Web3 User Experience Survey",
     rewards: 100,
     maxResponses: 100,
@@ -191,7 +191,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-456",
+    id: "survey-457",
     title: "DeFi Adoption Research",
     rewards: 75,
     maxResponses: 200,
@@ -227,7 +227,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-789",
+    id: "survey-790",
     title: "NFT Market Sentiment",
     rewards: 150,
     maxResponses: 50,
@@ -251,7 +251,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: false,
   },
   {
-    id: "survey-123",
+    id: "survey-125",
     title: "Web3 User Experience Survey",
     rewards: 100,
     maxResponses: 100,
@@ -287,7 +287,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-456",
+    id: "survey-458",
     title: "DeFi Adoption Research",
     rewards: 75,
     maxResponses: 200,
@@ -323,7 +323,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-789",
+    id: "survey-791",
     title: "NFT Market Sentiment",
     rewards: 150,
     maxResponses: 50,
@@ -347,7 +347,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: false,
   },
   {
-    id: "survey-123",
+    id: "survey-126",
     title: "Web3 User Experience Survey",
     rewards: 100,
     maxResponses: 100,
@@ -383,7 +383,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-456",
+    id: "survey-459",
     title: "DeFi Adoption Research",
     rewards: 75,
     maxResponses: 200,
@@ -419,7 +419,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-789",
+    id: "survey-792",
     title: "NFT Market Sentiment",
     rewards: 150,
     maxResponses: 50,
@@ -443,7 +443,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: false,
   },
   {
-    id: "survey-123",
+    id: "survey-127",
     title: "Web3 User Experience Survey",
     rewards: 100,
     maxResponses: 100,
@@ -479,7 +479,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-456",
+    id: "survey-460",
     title: "DeFi Adoption Research",
     rewards: 75,
     maxResponses: 200,
@@ -515,7 +515,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-789",
+    id: "survey-795",
     title: "NFT Market Sentiment",
     rewards: 150,
     maxResponses: 50,
@@ -539,7 +539,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: false,
   },
   {
-    id: "survey-123",
+    id: "survey-130",
     title: "Web3 User Experience Survey",
     rewards: 100,
     maxResponses: 100,
@@ -575,7 +575,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-456",
+    id: "survey-75",
     title: "DeFi Adoption Research",
     rewards: 75,
     maxResponses: 200,
@@ -611,7 +611,7 @@ const MOCK_SURVEYS: Survey[] = [
     eligible: true,
   },
   {
-    id: "survey-789",
+    id: "survey-799",
     title: "NFT Market Sentiment",
     rewards: 150,
     maxResponses: 50,
@@ -687,7 +687,7 @@ export default function SurveyFeed() {
   }, [showOnlyEligible]);
 
   // Height calculations accounting for header (80px) and footer (64px)
-  const containerHeight = "calc(100vh - 144px)"; // 80px header + 64px footer
+  const containerHeight = "calc(100dvh - 144px)"; // 80px header + 64px footer
 
   return (
     <div className="flex flex-col w-full max-w-md mx-auto">
