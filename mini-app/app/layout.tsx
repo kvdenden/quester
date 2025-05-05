@@ -43,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-gradient-to-tl from-background via-background/95 to-primary/5 min-h-screen">
+      <body className="bg-gradient-to-tl from-background via-background/95 to-primary/5 min-h-dvh">
         <Providers>
           {children}
           <BottomNavigation />

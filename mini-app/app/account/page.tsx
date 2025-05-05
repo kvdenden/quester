@@ -53,7 +53,7 @@ export default function Account() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen font-sans text-[var(--app-foreground)] mini-app-theme ">
+    <div className="flex flex-col min-h-dvh font-sans text-[var(--app-foreground)] mini-app-theme ">
       <div>{saveFrameButton()}</div>
       <div className="w-full max-w-md mx-auto mb-[64px]  px-4 py-3 mb-[64px]">
         {/* App logo/header */}
