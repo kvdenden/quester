@@ -42,10 +42,6 @@ contract Quester {
     emit QuestCreated(msg.sender, questId);
   }
 
-  function getQuest(bytes32 questId) public view returns (Quest memory) {
-    return quests[questId];
-  }
-
   function claimReward(bytes32 questId, bytes32 submissionId) public {
     Quest storage quest = quests[questId];
 
@@ -60,5 +56,13 @@ contract Quester {
     IERC20(quest.rewardToken).safeTransfer(msg.sender, quest.rewardAmount);
 
     emit RewardClaimed(msg.sender, questId, submissionId);
+  }
+
+  function getQuest(bytes32 questId) public view returns (Quest memory) {
+    return quests[questId];
+  }
+
+  function isSubmissionClaimed(bytes32 questId, bytes32 submissionId) public view returns (bool) {
+    return submissions[questId][submissionId];
   }
 }
