@@ -687,7 +687,7 @@ export default function SurveyFeed() {
   }, [showOnlyEligible]);
 
   // Height calculations accounting for header (80px) and footer (64px)
-  const containerHeight = "calc(100vh - 144px)"; // 80px header + 64px footer
+  const containerHeight = "calc(100dvh - 144px)"; // 80px header + 64px footer
 
   return (
     <div className="flex flex-col w-full max-w-md mx-auto">
