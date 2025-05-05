@@ -11,3 +11,7 @@ anvil :; anvil --fork-url ${FORK_URL} --fork-block-number ${FORK_BLOCK_NUMBER} -
 
 deploy-anvil :; @forge script script/Deploy.s.sol --rpc-url http://localhost:8545  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast
 create-quest :; @forge script script/CreateQuest.s.sol --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast
+
+# Deploy to Base Sepolia
+deploy-sepolia :; @forge script script/Deploy.s.sol --rpc-url base_sepolia --broadcast --verify --slow --private-key ${PRIVATE_KEY}
+
