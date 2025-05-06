@@ -1,21 +1,44 @@
 import { createConfig } from "ponder";
 import { http } from "viem";
+import { questerAbi } from "./abis/quester";
 
-import { ExampleContractAbi } from "./abis/ExampleContractAbi";
+function getNetwork() {
+  switch (process.env.PONDER_NETWORK) {
+    case "mainnet":
+      return "base";
+    case "testnet":
+      return "baseSepolia";
+    default:
+      return "anvil";
+  }
+}
+
+const network = getNetwork();
+const startBlock = process.env.PONDER_START_BLOCK;
+const questerAddress = process.env.QUESTER_CONTRACT_ADDRESS;
 
 export default createConfig({
   networks: {
-    mainnet: {
-      chainId: 1,
-      transport: http(process.env.PONDER_RPC_URL_1),
+    anvil: {
+      chainId: 31337,
+      transport: http("http://127.0.0.1:8545"),
+      disableCache: true,
+    },
+    baseSepolia: {
+      chainId: 84532,
+      transport: http(process.env.PONDER_RPC_URL_84532),
+    },
+    base: {
+      chainId: 8453,
+      transport: http(process.env.PONDER_RPC_URL_8453),
     },
   },
   contracts: {
-    ExampleContract: {
-      network: "mainnet",
-      abi: ExampleContractAbi,
-      address: "0x0000000000000000000000000000000000000000",
-      startBlock: 1234567,
+    Quester: {
+      abi: questerAbi,
+      network,
+      address: questerAddress,
+      startBlock,
     },
   },
 });
