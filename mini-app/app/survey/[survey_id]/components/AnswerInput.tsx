@@ -41,13 +41,15 @@ function MultipleChoiceAnswer({
   selectedOptions,
   onToggle,
 }: MultipleChoiceAnswerProps) {
+  console.log("", options);
+  console.log(selectedOptions);
   return (
     <div className="space-y-3">
       {options.map((option, index) => (
         <div key={index} className="flex items-center space-x-2">
           <Checkbox
             id={`option-${index}`}
-            checked={selectedOptions.includes(option)}
+            checked={selectedOptions?.includes(option)}
             onCheckedChange={() => onToggle(option)}
           />
           <Label
@@ -115,13 +117,8 @@ export function AnswerInput({
     onChange(newValue);
   };
 
-  const handleMultipleChoice = (newValue: string) => {
-    if (Array.isArray(value)) {
-      const newOptions = value.includes(newValue)
-        ? value.filter((item) => item !== newValue)
-        : [...value, newValue];
-      onChange(newOptions);
-    }
+  const handleMultipleChoice = (option: string) => {
+    onChange(option);
   };
 
   const handleSingleChoice = (newValue: string) => {
