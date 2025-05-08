@@ -54,11 +54,17 @@ export default function Survey() {
   const goToNext = () => {
     // Save current answers
     if (currentQuestion.answerType === "text") {
-      setAnswers({ ...answers, [currentQuestionIndex]: textInput });
+      setAnswers((prev) => ({ ...prev, [currentQuestionIndex]: textInput }));
     } else if (currentQuestion.answerType === "multiple-choice") {
-      setAnswers({ ...answers, [currentQuestionIndex]: selectedOptions });
+      setAnswers((prev) => ({
+        ...prev,
+        [currentQuestionIndex]: selectedOptions,
+      }));
     } else if (currentQuestion.answerType === "single-choice") {
-      setAnswers({ ...answers, [currentQuestionIndex]: selectedOption });
+      setAnswers((prev) => ({
+        ...prev,
+        [currentQuestionIndex]: selectedOption,
+      }));
     }
 
     if (currentQuestionIndex < mockSurveyQuestions.length - 1) {
@@ -66,21 +72,23 @@ export default function Survey() {
 
       // Load next answers if they exist
       if (mockSurveyQuestions[currentQuestionIndex + 1].answerType === "text") {
-        setTextInput(answers[currentQuestionIndex + 1] as string);
+        setTextInput((answers[currentQuestionIndex + 1] as string) || "");
         setSelectedOptions([]);
         setSelectedOption("");
       } else if (
         mockSurveyQuestions[currentQuestionIndex + 1].answerType ===
         "multiple-choice"
       ) {
-        setSelectedOptions(answers[currentQuestionIndex + 1] as string[]);
+        setSelectedOptions(
+          (answers[currentQuestionIndex + 1] as string[]) || [],
+        );
         setTextInput("");
         setSelectedOption("");
       } else if (
         mockSurveyQuestions[currentQuestionIndex + 1].answerType ===
         "single-choice"
       ) {
-        setSelectedOption(answers[currentQuestionIndex + 1] as string);
+        setSelectedOption((answers[currentQuestionIndex + 1] as string) || "");
         setTextInput("");
         setSelectedOptions([]);
       }
@@ -136,7 +144,7 @@ export default function Survey() {
   const handleTextChange = (value: string | string[]) => {
     if (typeof value === "string") {
       setTextInput(value);
-      setAnswers({ ...answers, [currentQuestionIndex]: value });
+      setAnswers((prev) => ({ ...prev, [currentQuestionIndex]: value }));
     }
   };
 
@@ -146,14 +154,14 @@ export default function Survey() {
         ? selectedOptions.filter((item) => item !== value)
         : [...selectedOptions, value];
       setSelectedOptions(newOptions);
-      setAnswers({ ...answers, [currentQuestionIndex]: newOptions });
+      setAnswers((prev) => ({ ...prev, [currentQuestionIndex]: newOptions }));
     }
   };
 
   const handleSingleChoice = (value: string | string[]) => {
     if (typeof value === "string") {
       setSelectedOption(value);
-      setAnswers({ ...answers, [currentQuestionIndex]: value });
+      setAnswers((prev) => ({ ...prev, [currentQuestionIndex]: value }));
     }
   };
 
