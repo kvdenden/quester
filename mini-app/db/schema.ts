@@ -8,18 +8,12 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-type Question =
-  | {
-      question: string;
-      description: string;
-      answerType: "text";
-    }
-  | {
-      question: string;
-      description: string;
-      answerType: "single-choice" | "multiple-choice";
-      options: string[];
-    };
+type Question = {
+  question: string;
+  description?: string;
+  answerType: "text" | "single-choice" | "multiple-choice";
+  options?: string[];
+};
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: false, mode: "string" })
