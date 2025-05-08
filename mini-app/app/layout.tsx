@@ -5,7 +5,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import "@coinbase/onchainkit/styles.css";
 import BottomNavigation from "../components/BottomNavigation";
-
+import TopNavigation from "../components/TopNavigation";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -45,6 +45,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-gradient-to-tl from-background via-background/95 to-primary/5 min-h-dvh">
         <Providers>
+          <TopNavigation />
           {children}
           <BottomNavigation />
         </Providers>

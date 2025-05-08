@@ -1,7 +1,6 @@
 "use client";
 
-import { useMiniKit, useAddFrame } from "@coinbase/onchainkit/minikit";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   AudienceTargeting,
@@ -17,7 +16,6 @@ import {
 } from "@/components/survey-funding";
 import { SurveyOverview } from "@/components/survey-overview";
 import { QuestionOverview } from "@/components/question-overview";
-import { Check } from "lucide-react";
 import { mockSurveyQuestions } from "@/app/mock-data/questions";
 import { ProgressTracker } from "@/components/progress-tracker";
 import { SurveyIntro } from "@/components/survey-intro";
@@ -33,9 +31,6 @@ const steps: { id: Step; label: string }[] = [
 ];
 
 export default function Create() {
-  const { setFrameReady, isFrameReady, context } = useMiniKit();
-  const [frameAdded, setFrameAdded] = useState(false);
-  const addFrame = useAddFrame();
   const [currentStep, setCurrentStep] = useState<Step>("intro");
   const [questions, setQuestions] =
     useState<SurveyQuestionType[]>(mockSurveyQuestions);
@@ -50,42 +45,6 @@ export default function Create() {
     endDate: new Date(),
   });
   const [isExecuting, setIsExecuting] = useState(false);
-
-  useEffect(() => {
-    if (!isFrameReady) {
-      setFrameReady();
-    }
-  }, [setFrameReady, isFrameReady]);
-
-  const handleAddFrame = async () => {
-    const frameAdded = await addFrame();
-    setFrameAdded(Boolean(frameAdded));
-  };
-
-  const saveFrameButton = () => {
-    if (context && !context.client.added) {
-      return (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleAddFrame}
-          className="text-[var(--app-accent)] p-4"
-        >
-          Save Frame
-        </Button>
-      );
-    }
-
-    if (frameAdded) {
-      return (
-        <div className="flex items-center space-x-1 text-sm font-medium text-[#0052FF] animate-fade-out">
-          <Check className="text-[#0052FF]" size={16} />
-          <span>Saved</span>
-        </div>
-      );
-    }
-    return null;
-  };
 
   const handleIntroNext = () => {
     setCurrentStep("questions");
@@ -141,7 +100,7 @@ export default function Create() {
   };
   return (
     <div className="flex flex-col min-h-dvh font-sans text-[var(--app-foreground)] mini-app-theme ">
-      <div className="w-full max-w-md mx-auto px-4 py-3 mb-[64px]">
+      <div className="w-full max-w-md mx-auto px-4 py-3 mt-[48px] mb-[64px]">
         <header className="flex justify-between items-center mb-3">
           <div>
             {currentStep !== "intro" && (
@@ -150,7 +109,6 @@ export default function Create() {
               </Button>
             )}
           </div>
-          <div>{saveFrameButton()}</div>
         </header>
 
         {currentStep !== "intro" && (
