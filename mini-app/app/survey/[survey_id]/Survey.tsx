@@ -10,7 +10,7 @@ import { NavigationButtons } from "./components/NavigationButtons";
 
 export default function Survey() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, any>>({});
+  const [answers, setAnswers] = useState<Record<number, unknown>>({});
   const [textInput, setTextInput] = useState("");
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -30,21 +30,21 @@ export default function Survey() {
 
       // Load previous answers if they exist
       if (mockSurveyQuestions[currentQuestionIndex - 1].answerType === "text") {
-        setTextInput(answers[currentQuestionIndex - 1] || "");
+        setTextInput(answers[currentQuestionIndex - 1] as string);
         setSelectedOptions([]);
         setSelectedOption("");
       } else if (
         mockSurveyQuestions[currentQuestionIndex - 1].answerType ===
         "multiple-choice"
       ) {
-        setSelectedOptions(answers[currentQuestionIndex - 1] || []);
+        setSelectedOptions(answers[currentQuestionIndex - 1] as string[]);
         setTextInput("");
         setSelectedOption("");
       } else if (
         mockSurveyQuestions[currentQuestionIndex - 1].answerType ===
         "single-choice"
       ) {
-        setSelectedOption(answers[currentQuestionIndex - 1] || "");
+        setSelectedOption(answers[currentQuestionIndex - 1] as string);
         setTextInput("");
         setSelectedOptions([]);
       }
@@ -66,21 +66,21 @@ export default function Survey() {
 
       // Load next answers if they exist
       if (mockSurveyQuestions[currentQuestionIndex + 1].answerType === "text") {
-        setTextInput(answers[currentQuestionIndex + 1] || "");
+        setTextInput(answers[currentQuestionIndex + 1] as string);
         setSelectedOptions([]);
         setSelectedOption("");
       } else if (
         mockSurveyQuestions[currentQuestionIndex + 1].answerType ===
         "multiple-choice"
       ) {
-        setSelectedOptions(answers[currentQuestionIndex + 1] || []);
+        setSelectedOptions(answers[currentQuestionIndex + 1] as string[]);
         setTextInput("");
         setSelectedOption("");
       } else if (
         mockSurveyQuestions[currentQuestionIndex + 1].answerType ===
         "single-choice"
       ) {
-        setSelectedOption(answers[currentQuestionIndex + 1] || "");
+        setSelectedOption(answers[currentQuestionIndex + 1] as string);
         setTextInput("");
         setSelectedOptions([]);
       }
@@ -97,19 +97,25 @@ export default function Survey() {
       const answer = answers[index];
 
       if (question.answerType === "text") {
-        if (!answer || answer.trim() === "") {
+        if (!answer || (answer as string).trim() === "") {
           warnings[index] = "No answer provided";
-        } else if (question.minChars && answer.length < question.minChars) {
+        } else if (
+          question.minChars &&
+          (answer as string).length < question.minChars
+        ) {
           warnings[index] = `Minimum ${question.minChars} characters required`;
-        } else if (question.maxChars && answer.length > question.maxChars) {
+        } else if (
+          question.maxChars &&
+          (answer as string).length > question.maxChars
+        ) {
           warnings[index] = `Maximum ${question.maxChars} characters allowed`;
         }
       } else if (question.answerType === "multiple-choice") {
-        if (!answer || answer.length === 0) {
+        if (!answer || (answer as string[]).length === 0) {
           warnings[index] = "No option selected";
         }
       } else if (question.answerType === "single-choice") {
-        if (!answer || answer.trim() === "") {
+        if (!answer || (answer as string).trim() === "") {
           warnings[index] = "No option selected";
         }
       }
@@ -127,21 +133,28 @@ export default function Survey() {
     console.log("Submitting survey answers:", answers);
   };
 
-  const handleTextChange = (value: string) => {
-    setTextInput(value);
-  };
-
-  const toggleOption = (option: string) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter((item) => item !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
+  const handleTextChange = (value: string | string[]) => {
+    if (typeof value === "string") {
+      setTextInput(value);
+      setAnswers({ ...answers, [currentQuestionIndex]: value });
     }
   };
 
-  const handleSingleChoice = (value: string) => {
-    setSelectedOption(value);
-    setAnswers({ ...answers, [currentQuestionIndex]: value });
+  const toggleOption = (value: string | string[]) => {
+    if (typeof value === "string") {
+      const newOptions = selectedOptions.includes(value)
+        ? selectedOptions.filter((item) => item !== value)
+        : [...selectedOptions, value];
+      setSelectedOptions(newOptions);
+      setAnswers({ ...answers, [currentQuestionIndex]: newOptions });
+    }
+  };
+
+  const handleSingleChoice = (value: string | string[]) => {
+    if (typeof value === "string") {
+      setSelectedOption(value);
+      setAnswers({ ...answers, [currentQuestionIndex]: value });
+    }
   };
 
   const containerHeight = "calc(100dvh - 112px)"; // 64px footer

@@ -97,7 +97,7 @@ function SingleChoiceAnswer({
 interface AnswerInputProps {
   type: "text" | "multiple-choice" | "single-choice";
   value: string | string[];
-  onChange: (value: any) => void;
+  onChange: (value: string | string[]) => void;
   options?: string[];
   minChars?: number;
   maxChars?: number;
@@ -111,12 +111,29 @@ export function AnswerInput({
   minChars,
   maxChars,
 }: AnswerInputProps) {
+  const handleTextChange = (newValue: string) => {
+    onChange(newValue);
+  };
+
+  const handleMultipleChoice = (newValue: string) => {
+    if (Array.isArray(value)) {
+      const newOptions = value.includes(newValue)
+        ? value.filter((item) => item !== newValue)
+        : [...value, newValue];
+      onChange(newOptions);
+    }
+  };
+
+  const handleSingleChoice = (newValue: string) => {
+    onChange(newValue);
+  };
+
   switch (type) {
     case "text":
       return (
         <TextAnswer
           value={value as string}
-          onChange={onChange}
+          onChange={handleTextChange}
           minChars={minChars}
           maxChars={maxChars}
         />
@@ -126,7 +143,7 @@ export function AnswerInput({
         <MultipleChoiceAnswer
           options={options || []}
           selectedOptions={value as string[]}
-          onToggle={onChange}
+          onToggle={handleMultipleChoice}
         />
       );
     case "single-choice":
@@ -134,7 +151,7 @@ export function AnswerInput({
         <SingleChoiceAnswer
           options={options || []}
           selectedOption={value as string}
-          onChange={onChange}
+          onChange={handleSingleChoice}
         />
       );
     default:

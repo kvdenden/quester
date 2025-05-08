@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Home, PlusCircle, User, Trophy } from "lucide-react";
+import { Home } from "lucide-react";
 import {
   ConnectWallet,
   Wallet,
@@ -9,15 +9,11 @@ import {
   WalletDropdownFundLink,
 } from "@coinbase/onchainkit/wallet";
 import { Address, Avatar, Name, Identity } from "@coinbase/onchainkit/identity";
-import {
-  FundCard,
-  FundButton,
-  getOnrampBuyUrl,
-} from "@coinbase/onchainkit/fund";
+import { getOnrampBuyUrl } from "@coinbase/onchainkit/fund";
 import { color } from "@coinbase/onchainkit/theme";
 import { useAccount } from "wagmi";
 export default function BottomNavigation() {
-  const { address, isConnected, isConnecting } = useAccount();
+  const { address, isConnected } = useAccount();
   const onrampBuyUrl = getOnrampBuyUrl({
     projectId: process.env.NEXT_PUBLIC_CDP_PROJECT_ID as string,
     addresses: { [address as string]: ["base"] },
@@ -26,9 +22,6 @@ export default function BottomNavigation() {
     fiatCurrency: "USD",
   });
 
-  console.log("isConnecting", isConnecting);
-  console.log("isConnected", isConnected);
-  console.log("address", address);
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 z-10">
       <div className="flex justify-between items-center h-12">
@@ -57,7 +50,6 @@ export default function BottomNavigation() {
               <Address className={color.foregroundMuted} />
             </Identity>
             <WalletDropdownFundLink fundingUrl={onrampBuyUrl} />
-
             <WalletDropdownDisconnect />
           </WalletDropdown>
         </Wallet>

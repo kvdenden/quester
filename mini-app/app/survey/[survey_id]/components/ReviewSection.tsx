@@ -7,7 +7,7 @@ interface Question {
 
 interface ReviewSectionProps {
   questions: Question[];
-  answers: Record<number, any>;
+  answers: Record<number, unknown>;
   validationWarnings: Record<number, string>;
 }
 
@@ -28,18 +28,18 @@ export function ReviewSection({
             <div className="text-sm font-thin text-foreground">
               {question.answerType === "text" ? (
                 <p className="whitespace-pre-wrap break-words">
-                  {answers[index]}
+                  {answers[index] as string}
                 </p>
               ) : question.answerType === "multiple-choice" ? (
                 <ul className="list-disc list-inside">
-                  {answers[index]?.map((option: string) => (
+                  {(answers[index] as string[]).map((option: string) => (
                     <li key={option} className="break-words">
                       {option}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="break-words">{answers[index]}</p>
+                <p className="break-words">{answers[index] as string}</p>
               )}
             </div>
             {validationWarnings[index] && (
