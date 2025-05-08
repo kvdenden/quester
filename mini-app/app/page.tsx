@@ -61,7 +61,7 @@ export default function App() {
   return (
     <div className="flex flex-col min-h-dvh font-sans text-[var(--app-foreground)] mini-app-theme ">
       <div>{saveFrameButton()}</div>
-      <div className="w-full max-w-md mx-auto mb-[64px]">
+      <div className="w-full max-w-md mx-auto mt-[48px] mb-[64px]">
         {/* App logo/header */}
         <div className="bg-primary py-12 px-6 text-center">
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">

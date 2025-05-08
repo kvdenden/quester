@@ -100,7 +100,7 @@ export default function Create() {
   };
   return (
     <div className="flex flex-col min-h-dvh font-sans text-[var(--app-foreground)] mini-app-theme ">
-      <div className="w-full max-w-md mx-auto px-4 py-3 mb-[64px]">
+      <div className="w-full max-w-md mx-auto px-4 py-3 mt-[48px] mb-[64px]">
         <header className="flex justify-between items-center mb-3">
           <div>
             {currentStep !== "intro" && (

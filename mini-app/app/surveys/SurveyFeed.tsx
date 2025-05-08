@@ -690,15 +690,13 @@ export default function SurveyFeed() {
   const containerHeight = "calc(100dvh - 144px)"; // 80px header + 64px footer
 
   return (
-    <div className="flex flex-col w-full max-w-md mx-auto">
-      <div className="sticky top-0 z-10 bg-background p-4 border-b h-[80px] flex items-center">
+    <div className="flex flex-col w-full max-w-md mx-auto relative">
+      <div className="sticky top-[48px] z-10 bg-background p-4 border-b h-[32px] flex items-center bg-transparent mt-1">
         <div className="flex items-center space-x-2">
           <Checkbox
             id="show-eligible"
             checked={showOnlyEligible}
-            onCheckedChange={(checked) =>
-              setShowOnlyEligible(checked as boolean)
-            }
+            onCheckedChange={(checked: boolean) => setShowOnlyEligible(checked)}
           />
           <Label
             htmlFor="show-eligible"
@@ -708,7 +706,6 @@ export default function SurveyFeed() {
           </Label>
         </div>
       </div>
-
       <div
         className={`snap-y snap-mandatory h-[${containerHeight}] overflow-y-auto`}
         style={{ height: containerHeight }}

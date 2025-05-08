@@ -7,7 +7,7 @@ export type Step = "intro" | "questions" | "audience" | "fund" | "overview";
 export default function Account() {
   return (
     <div className="flex flex-col min-h-dvh font-sans text-[var(--app-foreground)] mini-app-theme ">
-      <div className="w-full max-w-md mx-auto mb-[64px] px-4 py-3">
+      <div className="w-full max-w-md mx-auto mb-[64px] mt-[48px] px-4 py-3">
         <Tabs defaultValue="account" className="w-full">
           <TabsList className="w-full">
             <TabsTrigger className="w-full" value="account">

@@ -144,7 +144,7 @@ export default function Survey() {
     setAnswers({ ...answers, [currentQuestionIndex]: value });
   };
 
-  const containerHeight = "calc(100dvh - 64px)"; // 64px footer
+  const containerHeight = "calc(100dvh - 112px)"; // 64px footer
 
   return (
     <div
