@@ -45,13 +45,14 @@ export default function Create() {
     endDate: new Date(),
   });
   const [isExecuting, setIsExecuting] = useState(false);
-
+  const [showSurveyQuestion, setShowSurveyQuestion] = useState(false);
   const handleIntroNext = () => {
     setCurrentStep("questions");
   };
 
   const handleQuestionNext = (question: SurveyQuestionType) => {
     setQuestions([...questions, question]);
+    setShowSurveyQuestion(false);
   };
 
   const handleQuestionsComplete = () => {
@@ -84,6 +85,18 @@ export default function Create() {
 
   const handleDeleteQuestion = (index: number) => {
     setQuestions(questions.filter((_, i) => i !== index));
+    if (questions.filter((_, i) => i !== index).length === 0) {
+      setShowSurveyQuestion(true);
+    }
+  };
+
+  const handleUpdateQuestion = (
+    index: number,
+    updatedQuestion: SurveyQuestionType,
+  ) => {
+    const newQuestions = [...questions];
+    newQuestions[index] = updatedQuestion;
+    setQuestions(newQuestions);
   };
 
   const handleExecuteSurvey = async () => {
@@ -123,13 +136,24 @@ export default function Create() {
                 <QuestionOverview
                   questions={questions}
                   onDeleteQuestion={handleDeleteQuestion}
+                  onUpdateQuestion={handleUpdateQuestion}
                   onComplete={handleQuestionsComplete}
                 />
               )}
-              <SurveyQuestion onNext={handleQuestionNext} />
+              {showSurveyQuestion ? (
+                <SurveyQuestion onNext={handleQuestionNext} />
+              ) : (
+                <Button
+                  className="w-full text-foreground"
+                  onClick={() => setShowSurveyQuestion(true)}
+                  variant="outline"
+                >
+                  Add question
+                </Button>
+              )}
               {questions.length > 0 && (
                 <Button
-                  className="w-full"
+                  className="w-full "
                   onClick={handleQuestionsComplete}
                   disabled={questions.length === 0}
                 >
