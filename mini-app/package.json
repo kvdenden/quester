@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "services:start": "sh services/scripts/start.sh",
+    "services:stop": "sh services/scripts/stop.sh",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@coinbase/onchainkit": "latest",
@@ -25,20 +30,27 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "drizzle-orm": "^0.43.1",
     "lucide-react": "^0.503.0",
+    "nanoid": "^5.1.5",
     "next": "^14.2.15",
+    "pg": "^8.15.6",
+    "postgres": "^3.4.5",
     "react": "^18",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.27.2",
-    "wagmi": "^2.14.11"
+    "wagmi": "^2.14.11",
+    "zod": "^3.24.4"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "dotenv": "^16.5.0",
+    "drizzle-kit": "^0.31.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
     "eslint-config-prettier": "^10.1.1",
