@@ -16,13 +16,19 @@ import { useSignIn } from "@/app/hooks/useSignIn";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function BottomNavigation() {
+export default function TopNavigation() {
   const { address, isConnected } = useAccount();
 
   const { signIn, isLoading, isSignedIn, user } = useSignIn({
     autoSignIn: true,
   });
+
   const [testResult, setTestResult] = useState<string>("");
+
+  console.log("user", user);
+  console.log("isSignedIn", isSignedIn);
+  console.log("isLoading", isLoading);
+  console.log(user?.pfp_url);
 
   const testAuth = async () => {
     try {
@@ -44,6 +50,7 @@ export default function BottomNavigation() {
       );
     }
   };
+
   const onrampBuyUrl = getOnrampBuyUrl({
     projectId: process.env.NEXT_PUBLIC_CDP_PROJECT_ID as string,
     addresses: { [address as string]: ["base"] },
