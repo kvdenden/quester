@@ -16,9 +16,10 @@ import {
 } from "@/components/survey-funding";
 import { SurveyOverview } from "@/components/survey-overview";
 import { QuestionOverview } from "@/components/question-overview";
-import { mockSurveyQuestions } from "@/app/mock-data/questions";
 import { ProgressTracker } from "@/components/progress-tracker";
 import { SurveyIntro } from "@/components/survey-intro";
+import { SurveyTemplateSelector } from "@/components/survey-template-selector";
+import { Separator } from "@/components/ui/separator";
 
 export type Step = "intro" | "questions" | "audience" | "fund" | "overview";
 
@@ -32,8 +33,7 @@ const steps: { id: Step; label: string }[] = [
 
 export default function Create() {
   const [currentStep, setCurrentStep] = useState<Step>("intro");
-  const [questions, setQuestions] =
-    useState<SurveyQuestionType[]>(mockSurveyQuestions);
+  const [questions, setQuestions] = useState<SurveyQuestionType[]>([]);
   const [audienceTarget, setAudienceTarget] = useState<AudienceTarget>({
     rules: [],
   });
@@ -45,7 +45,7 @@ export default function Create() {
     endDate: new Date(),
   });
   const [isExecuting, setIsExecuting] = useState(false);
-  const [showSurveyQuestion, setShowSurveyQuestion] = useState(false);
+  const [showSurveyQuestion, setShowSurveyQuestion] = useState(true);
   const handleIntroNext = () => {
     setCurrentStep("questions");
   };
@@ -111,14 +111,32 @@ export default function Create() {
       setIsExecuting(false);
     }
   };
+
+  const handleReset = () => {
+    setQuestions([]);
+    setShowSurveyQuestion(true);
+  };
+
   return (
     <div className="flex flex-col min-h-dvh font-sans text-[var(--app-foreground)] mini-app-theme ">
       <div className="w-full max-w-md mx-auto px-4 py-3 mt-[48px] mb-[64px]">
         <header className="flex justify-between items-center mb-3">
           <div>
             {currentStep !== "intro" && (
-              <Button variant="secondary" size="sm" onClick={handleBack}>
+              <Button size="sm" onClick={handleBack}>
                 Back
+              </Button>
+            )}
+          </div>
+          <div>
+            {currentStep === "questions" && questions.length > 0 && (
+              <Button
+                className="text-muted-foreground px-2 text-xs"
+                size="sm"
+                variant="ghost"
+                onClick={handleReset}
+              >
+                Reset form
               </Button>
             )}
           </div>
@@ -159,6 +177,20 @@ export default function Create() {
                 >
                   Continue to Targeting
                 </Button>
+              )}
+              {questions.length === 0 && (
+                <>
+                  <Separator className="my-4" />
+                  <div className="text-sm text-center text-muted-foreground font-medium">
+                    Or start with a template
+                  </div>
+                  <SurveyTemplateSelector
+                    onSelect={(templateQuestions) => {
+                      setQuestions(templateQuestions);
+                      setShowSurveyQuestion(false);
+                    }}
+                  />
+                </>
               )}
             </div>
           )}

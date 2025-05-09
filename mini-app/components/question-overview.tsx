@@ -2,12 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Pencil } from "lucide-react";
 import { SurveyQuestion as SurveyQuestionType } from "@/components/survey-question";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
 import { SurveyQuestion } from "@/components/survey-question";
 
