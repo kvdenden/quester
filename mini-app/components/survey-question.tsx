@@ -29,15 +29,31 @@ export interface SurveyQuestion {
 
 interface SurveyQuestionProps {
   onNext: (question: SurveyQuestion) => void;
+  initialQuestion?: SurveyQuestion;
+  isEditing?: boolean;
 }
 
-export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
-  const [question, setQuestion] = useState("");
-  const [description, setDescription] = useState("");
-  const [answerType, setAnswerType] = useState<AnswerType>("text");
-  const [minChars, setMinChars] = useState<number>(0);
-  const [maxChars, setMaxChars] = useState<number>(1000);
-  const [options, setOptions] = useState<string[]>([]);
+export function SurveyQuestion({
+  onNext,
+  initialQuestion,
+  isEditing,
+}: SurveyQuestionProps) {
+  const [question, setQuestion] = useState(initialQuestion?.question || "");
+  const [description, setDescription] = useState(
+    initialQuestion?.description || "",
+  );
+  const [answerType, setAnswerType] = useState<AnswerType>(
+    initialQuestion?.answerType || "text",
+  );
+  const [minChars, setMinChars] = useState<number>(
+    initialQuestion?.minChars || 0,
+  );
+  const [maxChars, setMaxChars] = useState<number>(
+    initialQuestion?.maxChars || 1000,
+  );
+  const [options, setOptions] = useState<string[]>(
+    initialQuestion?.options || [],
+  );
   const [newOption, setNewOption] = useState("");
 
   const resetForm = () => {
@@ -83,90 +99,90 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
     <div className="space-y-6">
       <div className="space-y-2">
         <label className="text-sm font-medium text-muted-foreground flex justify-between items-center gap-2">
-          Question *
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Settings className="h-4 w-4 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Type</label>
-                      <Select
-                        value={answerType}
-                        onValueChange={(value: AnswerType) =>
-                          setAnswerType(value)
-                        }
-                      >
-                        <SelectTrigger className="bg-background text-xs text-foreground ">
-                          <SelectValue
-                            placeholder="Select answer type"
-                            className="text-xs"
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem className="text-xs" value="text">
-                            Text
-                          </SelectItem>
-                          <SelectItem className="text-xs" value="single-choice">
-                            Single Choice
-                          </SelectItem>
-                          <SelectItem
-                            className="text-xs"
-                            value="multiple-choice"
-                          >
-                            Multiple Choice
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {answerType === "text" && (
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">
-                            Minimum Characters
-                          </label>
-                          <Input
-                            type="number"
-                            value={minChars}
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>,
-                            ) => setMinChars(Number(e.target.value))}
-                            min={0}
-                            className="bg-background text-foreground text-xs"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">
-                            Maximum Characters
-                          </label>
-                          <Input
-                            type="number"
-                            value={maxChars}
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>,
-                            ) => setMaxChars(Number(e.target.value))}
-                            min={minChars}
-                            className="bg-background text-foreground text-xs"
-                          />
-                        </div>
+          {isEditing ? "Edit Question" : "Question *"}
+          {!isEditing && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Settings className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Type</label>
+                        <Select
+                          value={answerType}
+                          onValueChange={(value: AnswerType) =>
+                            setAnswerType(value)
+                          }
+                        >
+                          <SelectTrigger className="bg-background text-xs text-foreground ">
+                            <SelectValue
+                              placeholder="Select answer type"
+                              className="text-xs"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem className="text-xs" value="text">
+                              Text
+                            </SelectItem>
+                            <SelectItem
+                              className="text-xs"
+                              value="single-choice"
+                            >
+                              Single Choice
+                            </SelectItem>
+                            <SelectItem
+                              className="text-xs"
+                              value="multiple-choice"
+                            >
+                              Multiple Choice
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                    )}
-                  </div>
-                </PopoverContent>
-              </Popover>
+
+                      {answerType === "text" && (
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">
+                              Minimum Characters
+                            </label>
+                            <Input
+                              type="number"
+                              value={minChars}
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>,
+                              ) => setMinChars(Number(e.target.value))}
+                              min={0}
+                              className="bg-card text-foreground text-xs"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">
+                              Maximum Characters
+                            </label>
+                            <Input
+                              type="number"
+                              value={maxChars}
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>,
+                              ) => setMaxChars(Number(e.target.value))}
+                              min={minChars}
+                              className="bg-card text-foreground text-xs"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
-            {/* <div className="text-sm text-muted-foreground">
-          {answerType === "text" && "Text answer"}
-          {answerType === "single-choice" && "Single choice answer"}
-          {answerType === "multiple-choice" && "Multiple choice answer"}
-        </div> */}
-          </div>
+          )}
         </label>
         <Input
           value={question}
@@ -238,7 +254,7 @@ export function SurveyQuestion({ onNext }: SurveyQuestionProps) {
         onClick={handleNext}
         disabled={isNextDisabled}
       >
-        Add Question
+        {isEditing ? "Update question" : "Add to survey"}
       </Button>
     </div>
   );

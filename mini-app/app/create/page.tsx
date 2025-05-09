@@ -16,9 +16,10 @@ import {
 } from "@/components/survey-funding";
 import { SurveyOverview } from "@/components/survey-overview";
 import { QuestionOverview } from "@/components/question-overview";
-import { mockSurveyQuestions } from "@/app/mock-data/questions";
 import { ProgressTracker } from "@/components/progress-tracker";
 import { SurveyIntro } from "@/components/survey-intro";
+import { SurveyTemplateSelector } from "@/components/survey-template-selector";
+import { Separator } from "@/components/ui/separator";
 
 export type Step = "intro" | "questions" | "audience" | "fund" | "overview";
 
@@ -32,8 +33,7 @@ const steps: { id: Step; label: string }[] = [
 
 export default function Create() {
   const [currentStep, setCurrentStep] = useState<Step>("intro");
-  const [questions, setQuestions] =
-    useState<SurveyQuestionType[]>(mockSurveyQuestions);
+  const [questions, setQuestions] = useState<SurveyQuestionType[]>([]);
   const [audienceTarget, setAudienceTarget] = useState<AudienceTarget>({
     rules: [],
   });
@@ -45,13 +45,14 @@ export default function Create() {
     endDate: new Date(),
   });
   const [isExecuting, setIsExecuting] = useState(false);
-
+  const [showSurveyQuestion, setShowSurveyQuestion] = useState(true);
   const handleIntroNext = () => {
     setCurrentStep("questions");
   };
 
   const handleQuestionNext = (question: SurveyQuestionType) => {
     setQuestions([...questions, question]);
+    setShowSurveyQuestion(false);
   };
 
   const handleQuestionsComplete = () => {
@@ -84,6 +85,18 @@ export default function Create() {
 
   const handleDeleteQuestion = (index: number) => {
     setQuestions(questions.filter((_, i) => i !== index));
+    if (questions.filter((_, i) => i !== index).length === 0) {
+      setShowSurveyQuestion(true);
+    }
+  };
+
+  const handleUpdateQuestion = (
+    index: number,
+    updatedQuestion: SurveyQuestionType,
+  ) => {
+    const newQuestions = [...questions];
+    newQuestions[index] = updatedQuestion;
+    setQuestions(newQuestions);
   };
 
   const handleExecuteSurvey = async () => {
@@ -98,14 +111,32 @@ export default function Create() {
       setIsExecuting(false);
     }
   };
+
+  const handleReset = () => {
+    setQuestions([]);
+    setShowSurveyQuestion(true);
+  };
+
   return (
     <div className="flex flex-col min-h-dvh font-sans text-[var(--app-foreground)] mini-app-theme ">
       <div className="w-full max-w-md mx-auto px-4 py-3 mt-[48px] mb-[64px]">
         <header className="flex justify-between items-center mb-3">
           <div>
             {currentStep !== "intro" && (
-              <Button variant="secondary" size="sm" onClick={handleBack}>
+              <Button size="sm" onClick={handleBack}>
                 Back
+              </Button>
+            )}
+          </div>
+          <div>
+            {currentStep === "questions" && questions.length > 0 && (
+              <Button
+                className="text-muted-foreground px-2 text-xs"
+                size="sm"
+                variant="ghost"
+                onClick={handleReset}
+              >
+                Reset form
               </Button>
             )}
           </div>
@@ -123,18 +154,43 @@ export default function Create() {
                 <QuestionOverview
                   questions={questions}
                   onDeleteQuestion={handleDeleteQuestion}
+                  onUpdateQuestion={handleUpdateQuestion}
                   onComplete={handleQuestionsComplete}
                 />
               )}
-              <SurveyQuestion onNext={handleQuestionNext} />
+              {showSurveyQuestion ? (
+                <SurveyQuestion onNext={handleQuestionNext} />
+              ) : (
+                <Button
+                  className="w-full text-foreground"
+                  onClick={() => setShowSurveyQuestion(true)}
+                  variant="outline"
+                >
+                  Add question
+                </Button>
+              )}
               {questions.length > 0 && (
                 <Button
-                  className="w-full"
+                  className="w-full "
                   onClick={handleQuestionsComplete}
                   disabled={questions.length === 0}
                 >
                   Continue to Targeting
                 </Button>
+              )}
+              {questions.length === 0 && (
+                <>
+                  <Separator className="my-4" />
+                  <div className="text-sm text-center text-muted-foreground font-medium">
+                    Or start with a template
+                  </div>
+                  <SurveyTemplateSelector
+                    onSelect={(templateQuestions) => {
+                      setQuestions(templateQuestions);
+                      setShowSurveyQuestion(false);
+                    }}
+                  />
+                </>
               )}
             </div>
           )}
