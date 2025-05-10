@@ -3,7 +3,7 @@ import postgres from "postgres";
 
 import * as schema from "./schema";
 
-export const client = postgres(process.env.DATABASE_URL!, {
+export const client = postgres(process.env.DATABASE_URL, {
   prepare: false,
 });
 

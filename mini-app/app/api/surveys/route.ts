@@ -22,7 +22,14 @@ const surveySchema = z.object({
 export async function GET() {
   try {
     const allSurveys = await db.select().from(surveys);
-    return NextResponse.json({ surveys: allSurveys });
+
+    return NextResponse.json({
+      surveys: allSurveys.map((survey) => ({
+        id: survey.slug,
+        title: survey.title,
+        questions: survey.questions,
+      })),
+    });
   } catch (error) {
     console.error("Error fetching surveys:", error);
     return NextResponse.json(
@@ -55,17 +62,14 @@ export async function POST(request: Request) {
     }
 
     // Create the survey
-    const [survey] = await db
-      .insert(surveys)
-      .values({
-        slug,
-        title,
-        questions,
-        questId,
-      })
-      .returning();
+    await db.insert(surveys).values({
+      slug,
+      title,
+      questions,
+      questId,
+    });
 
-    return NextResponse.json({ survey }, { status: 201 });
+    return NextResponse.json({ id: slug }, { status: 201 });
   } catch (error) {
     console.error("Error creating survey:", error);
 
