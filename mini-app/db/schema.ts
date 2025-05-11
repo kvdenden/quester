@@ -25,8 +25,25 @@ const timestamps = {
     .$onUpdate(() => sql`now()`),
 };
 
+export const users = pgTable("users", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  fid: text("fid").notNull().unique(),
+  address: text("address").notNull().unique(),
+
+  ...timestamps,
+});
+
+export const userRelations = relations(users, ({ many }) => ({
+  surveys: many(surveys),
+  responses: many(responses),
+}));
+
 export const surveys = pgTable("surveys", {
   id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull(),
+
   slug: text("slug").notNull().unique(), // Unique slug for URL
 
   title: text("title").notNull(),
@@ -38,7 +55,11 @@ export const surveys = pgTable("surveys", {
   ...timestamps,
 });
 
-export const surveyRelations = relations(surveys, ({ many }) => ({
+export const surveyRelations = relations(surveys, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [surveys.userId],
+    references: [users.id],
+  }),
   responses: many(responses),
 }));
 
@@ -46,6 +67,9 @@ export const responses = pgTable("responses", {
   id: uuid("id").defaultRandom().primaryKey(),
   surveyId: uuid("survey_id")
     .references(() => surveys.id)
+    .notNull(),
+  userId: uuid("user_id")
+    .references(() => users.id)
     .notNull(),
 
   answers: jsonb("answers").$type<string[]>().default([]).notNull(),
@@ -61,5 +85,9 @@ export const responseRelations = relations(responses, ({ one }) => ({
   survey: one(surveys, {
     fields: [responses.surveyId],
     references: [surveys.id],
+  }),
+  user: one(users, {
+    fields: [responses.userId],
+    references: [users.id],
   }),
 }));
