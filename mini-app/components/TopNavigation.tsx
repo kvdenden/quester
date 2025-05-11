@@ -1,78 +1,102 @@
 "use client";
 // import Link from "next/link";
 // import { Home } from "lucide-react";
-import {
-  ConnectWallet,
-  Wallet,
-  WalletDropdown,
-  WalletDropdownDisconnect,
-  WalletDropdownFundLink,
-} from "@coinbase/onchainkit/wallet";
-import { Address, Avatar, Name, Identity } from "@coinbase/onchainkit/identity";
-import { getOnrampBuyUrl } from "@coinbase/onchainkit/fund";
-import { color } from "@coinbase/onchainkit/theme";
-import { useAccount } from "wagmi";
+// import {
+//   ConnectWallet,
+//   Wallet,
+//   WalletDropdown,
+//   WalletDropdownDisconnect,
+//   WalletDropdownFundLink,
+// } from "@coinbase/onchainkit/wallet";
+// import { Address, Avatar, Name, Identity } from "@coinbase/onchainkit/identity";
+// import { getOnrampBuyUrl } from "@coinbase/onchainkit/fund";
+// import { color } from "@coinbase/onchainkit/theme";
+// import { useAccount } from "wagmi";
 import { useSignIn } from "@/app/hooks/useSignIn";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback } from "react";
+import { Button } from "@/components/ui/button";
+// import { JsonRpcProvider } from "ethers";
+// import {
+//   useProfile,
+//   useSignIn as useFarcasterSignIn,
+// } from "@farcaster/auth-kit";
+import FarcasterLogin from "./farcaster-login";
+import { useViewProfile } from "@coinbase/onchainkit/minikit";
 
 export default function TopNavigation() {
-  const { address, isConnected } = useAccount();
+  // const { address } = useAccount();
 
   const { signIn, isLoading, isSignedIn, user } = useSignIn({
-    autoSignIn: true,
+    autoSignIn: false,
   });
 
-  const [testResult, setTestResult] = useState<string>("");
-
-  console.log("user", user);
-  console.log("isSignedIn", isSignedIn);
-  console.log("isLoading", isLoading);
-  console.log(user?.pfp_url);
-
-  const testAuth = async () => {
-    try {
-      const res = await fetch("/api/test", {
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        setTestResult(`Auth test failed: ${data.error}`);
-        return;
-      }
-
-      setTestResult(`Auth test succeeded! Server response: ${data.message}`);
-    } catch (error) {
-      setTestResult(
-        "Auth test failed: " +
-          (error instanceof Error ? error.message : "Unknown error"),
-      );
-    }
+  // const { profile } = useProfile();
+  const viewProfile = useViewProfile();
+  const handleViewProfile = () => {
+    viewProfile();
   };
 
-  const onrampBuyUrl = getOnrampBuyUrl({
-    projectId: process.env.NEXT_PUBLIC_CDP_PROJECT_ID as string,
-    addresses: { [address as string]: ["base"] },
-    assets: ["USDC"],
-    presetFiatAmount: 20,
-    fiatCurrency: "USD",
-  });
+  // const memoizedProfile = useMemo(
+  //   () => ({
+  //     username: profile.username,
+  //     fid: profile.fid,
+  //     bio: profile.bio,
+  //     displayName: profile.displayName,
+  //     pfpUrl: profile.pfpUrl,
+  //   }),
+  //   [profile],
+  // );
+
+  // const [setTestResult] = useState<string>("");
+
+  // const testAuth = useCallback(async () => {
+  //   try {
+  //     const res = await fetch("/api/test", {
+  //       credentials: "include",
+  //     });
+  //     const data = await res.json();
+
+  //     if (!res.ok) {
+  //       setTestResult(`Auth test failed: ${data.error}`);
+  //       return;
+  //     }
+
+  //     setTestResult(`Auth test succeeded! Server response: ${data.message}`);
+  //   } catch (error) {
+  //     setTestResult(
+  //       "Auth test failed: " +
+  //         (error instanceof Error ? error.message : "Unknown error"),
+  //     );
+  //   }
+  // }, []);
+
+  // const onrampBuyUrl = useMemo(() => {
+  //   if (!address) return "";
+  //   return getOnrampBuyUrl({
+  //     projectId: process.env.NEXT_PUBLIC_CDP_PROJECT_ID as string,
+  //     addresses: { [address]: ["base"] },
+  //     assets: ["USDC"],
+  //     presetFiatAmount: 20,
+  //     fiatCurrency: "USD",
+  //   });
+  // }, [address]);
+
+  const handleSignIn = useCallback(() => {
+    signIn();
+  }, [signIn]);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 z-10">
+    <nav className="fixed top-0 left-0 max-w-md mx-auto right-0 bg-white border-b border-gray-200 px-4 z-10">
       <div className="flex justify-between items-center h-12">
-        {/* <Link href="/" className="flex flex-col items-center">
-          <Home className="h-6 w-6" />
-        </Link> */}
         {!isSignedIn ? (
-          <button
-            onClick={signIn}
+          <Button
+            onClick={handleSignIn}
             disabled={isLoading}
-            className="px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className="bg-primary text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 "
           >
             {isLoading ? "Signing in..." : "Sign in"}
-          </button>
+          </Button>
         ) : (
           <div className="space-y-4">
             {user && (
@@ -81,8 +105,8 @@ export default function TopNavigation() {
                   src={user.pfp_url}
                   alt="Profile"
                   className="w-20 h-20 rounded-full"
-                  width={80}
-                  height={80}
+                  width={24}
+                  height={24}
                 />
                 <div className="text-center">
                   <p className="font-semibold">{user.display_name}</p>
@@ -94,20 +118,16 @@ export default function TopNavigation() {
             )}
           </div>
         )}
-
         <button
-          onClick={testAuth}
-          className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors duration-200"
+          type="button"
+          onClick={handleViewProfile}
+          className="cursor-pointer bg-transparent font-semibold text-sm pl-2"
         >
-          Test Authentication
+          PROFILE
         </button>
+        <FarcasterLogin />
 
-        {testResult && (
-          <div className="mt-4 p-4 rounded-lg bg-gray-100 text-black text-sm">
-            {testResult}
-          </div>
-        )}
-        <Wallet>
+        {/* <Wallet>
           <ConnectWallet
             className={
               isConnected
@@ -131,7 +151,7 @@ export default function TopNavigation() {
             <WalletDropdownFundLink fundingUrl={onrampBuyUrl} />
             <WalletDropdownDisconnect />
           </WalletDropdown>
-        </Wallet>
+        </Wallet> */}
       </div>
     </nav>
   );
