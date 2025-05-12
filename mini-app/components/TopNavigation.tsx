@@ -1,56 +1,29 @@
 "use client";
-// import Link from "next/link";
-// import { Home } from "lucide-react";
-// import {
-//   ConnectWallet,
-//   Wallet,
-//   WalletDropdown,
-//   WalletDropdownDisconnect,
-//   WalletDropdownFundLink,
-// } from "@coinbase/onchainkit/wallet";
-// import { Address, Avatar, Name, Identity } from "@coinbase/onchainkit/identity";
-// import { getOnrampBuyUrl } from "@coinbase/onchainkit/fund";
-// import { color } from "@coinbase/onchainkit/theme";
-// import { useAccount } from "wagmi";
+
 import { useSignIn } from "@/app/hooks/useSignIn";
 import Image from "next/image";
-import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
-// import { JsonRpcProvider } from "ethers";
-// import {
-//   useProfile,
-//   useSignIn as useFarcasterSignIn,
-// } from "@farcaster/auth-kit";
-import FarcasterLogin from "./farcaster-login";
-import { useViewProfile } from "@coinbase/onchainkit/minikit";
+
+// import { useViewProfile } from "@coinbase/onchainkit/minikit";
+import {
+  useSession,
+  signIn as nextAuthSignIn,
+  signOut,
+  getCsrfToken,
+} from "next-auth/react";
+import { useCallback, useState } from "react";
+import { StatusAPIResponse } from "@farcaster/auth-kit";
+import { SignInButton } from "@farcaster/auth-kit";
 
 export default function TopNavigation() {
-  // const { address } = useAccount();
-
   const { signIn, isLoading, isSignedIn, user } = useSignIn({
     autoSignIn: false,
   });
 
-  // const { profile } = useProfile();
-  const viewProfile = useViewProfile();
-  const handleViewProfile = () => {
-    viewProfile();
-  };
-
-  // const memoizedProfile = useMemo(
-  //   () => ({
-  //     username: profile.username,
-  //     fid: profile.fid,
-  //     bio: profile.bio,
-  //     displayName: profile.displayName,
-  //     pfpUrl: profile.pfpUrl,
-  //   }),
-  //   [profile],
-  // );
-
-  // const [setTestResult] = useState<string>("");
-
-  // const testAuth = useCallback(async () => {
+  // const viewProfile = useViewProfile();
+  // const handleViewProfile = () => {
+  //   viewProfile();
+  // };
   //   try {
   //     const res = await fetch("/api/test", {
   //       credentials: "include",
@@ -86,6 +59,57 @@ export default function TopNavigation() {
     signIn();
   }, [signIn]);
 
+  function Content() {
+    const [error, setError] = useState(false);
+
+    const getNonce = useCallback(async () => {
+      const nonce = await getCsrfToken();
+      if (!nonce) throw new Error("Unable to generate nonce");
+      return nonce;
+    }, []);
+
+    const handleSuccess = useCallback((res: StatusAPIResponse) => {
+      console.log("res", res);
+      nextAuthSignIn("credentials", {
+        message: res.message,
+        signature: res.signature,
+        name: res.username,
+        pfp: res.pfpUrl,
+        redirect: false,
+      });
+    }, []);
+
+    return (
+      <div>
+        <div style={{ position: "fixed", top: "12px", right: "12px" }}>
+          <SignInButton
+            nonce={getNonce}
+            onSuccess={handleSuccess}
+            onError={() => setError(true)}
+            onSignOut={() => signOut()}
+          />
+          {error && <div>Unable to sign in at this time.</div>}
+        </div>
+
+        <Profile />
+      </div>
+    );
+  }
+
+  function Profile() {
+    const { data: session } = useSession();
+    return session ? (
+      <div style={{ fontFamily: "sans-serif" }}>
+        <p>Signed in as {session.user?.name}</p>
+      </div>
+    ) : (
+      <p>
+        Click the &quot;Sign in with Farcaster&quote; button above, then scan
+        the QR code to sign in.
+      </p>
+    );
+  }
+
   return (
     <nav className="fixed top-0 left-0 max-w-md mx-auto right-0 bg-white border-b border-gray-200 px-4 z-10">
       <div className="flex justify-between items-center h-12">
@@ -118,14 +142,8 @@ export default function TopNavigation() {
             )}
           </div>
         )}
-        <button
-          type="button"
-          onClick={handleViewProfile}
-          className="cursor-pointer bg-transparent font-semibold text-sm pl-2"
-        >
-          PROFILE
-        </button>
-        <FarcasterLogin />
+
+        <Content />
 
         {/* <Wallet>
           <ConnectWallet
