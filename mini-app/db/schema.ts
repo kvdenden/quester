@@ -73,10 +73,9 @@ export const responses = pgTable("responses", {
     .notNull(),
 
   answers: jsonb("answers").$type<string[]>().default([]).notNull(),
+  approved: boolean("approved").default(false).notNull(),
 
   submissionId: text("submission_id").notNull().unique(),
-
-  approved: boolean("approved").default(false).notNull(),
 
   ...timestamps,
 });

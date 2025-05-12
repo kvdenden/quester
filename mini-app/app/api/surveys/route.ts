@@ -27,6 +27,7 @@ export async function GET() {
     return NextResponse.json({
       surveys: allSurveys.map((survey) => ({
         id: survey.slug,
+        questId: survey.questId,
         title: survey.title,
         questions: survey.questions,
       })),
@@ -50,13 +51,11 @@ export async function POST(request: Request) {
     const slug = nanoid(10);
 
     // Check if questId is already in use
-    const existingSurvey = await db
-      .select()
-      .from(surveys)
-      .where(eq(surveys.questId, questId))
-      .limit(1);
+    const existingSurvey = await db.query.surveys.findFirst({
+      where: eq(surveys.questId, questId),
+    });
 
-    if (existingSurvey.length > 0) {
+    if (existingSurvey) {
       return NextResponse.json(
         { error: "Quest ID is already in use" },
         { status: 400 },
@@ -69,6 +68,7 @@ export async function POST(request: Request) {
       slug,
       title,
       questions,
+
       questId,
     });
 
