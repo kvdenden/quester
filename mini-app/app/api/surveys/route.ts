@@ -1,9 +1,10 @@
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { surveys } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { getUser } from "@/lib/auth";
 
 // Schema for survey creation
 const surveySchema = z.object({
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { title, questions, questId } = surveySchema.parse(body);
+    const { id: userId } = await getUser();
 
     // Generate a unique slug
     const slug = nanoid(10);
@@ -63,6 +65,7 @@ export async function POST(request: Request) {
 
     // Create the survey
     await db.insert(surveys).values({
+      userId,
       slug,
       title,
       questions,
