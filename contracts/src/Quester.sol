@@ -42,13 +42,13 @@ contract Quester {
     emit QuestCreated(msg.sender, questId);
   }
 
-  function claimReward(bytes32 questId, bytes32 submissionId) public {
+  function claimReward(bytes32 questId, bytes32 submissionId, bytes calldata signature) public {
     Quest storage quest = quests[questId];
 
     require(quest.creator != address(0), "Quest does not exist");
     require(quest.submissionCount < quest.submissionLimit, "Quest submission limit reached");
     require(!submissions[questId][submissionId], "Submission already claimed");
-    require(IValidator(quest.validator).validate(questId, submissionId, msg.sender), "Submission is invalid");
+    require(IValidator(quest.validator).validate(questId, submissionId, msg.sender, signature), "Submission is invalid");
 
     quest.submissionCount++;
     submissions[questId][submissionId] = true;

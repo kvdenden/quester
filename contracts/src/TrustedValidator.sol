@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.29;
 
+import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
+import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
+
 import { IValidator } from "./interfaces/IValidator.sol";
 
 contract TrustedValidator is IValidator {
@@ -16,17 +19,10 @@ contract TrustedValidator is IValidator {
         trustedAddress = _trustedAddress;
     }
 
-    modifier onlyTrusted() {
-        require(msg.sender == trustedAddress, "Only trusted address can call this function");
-        _;
-    }
+    function validate(bytes32 questId, bytes32 submissionId, address user, bytes calldata signature) external view override returns (bool) {
+        bytes memory message = abi.encodePacked(questId, submissionId, user);
+        bytes32 digest = MessageHashUtils.toEthSignedMessageHash(message);
 
-    function validateSubmission(bytes32 questId, bytes32 submissionId, address user) external onlyTrusted {
-        validatedSubmissions[questId][submissionId][user] = true;
-        emit SubmissionValidated(questId, submissionId, user);
-    }
-
-    function validate(bytes32 questId, bytes32 submissionId, address user) external view override returns (bool) {
-        return validatedSubmissions[questId][submissionId][user];
+        return SignatureChecker.isValidSignatureNow(trustedAddress, digest, signature);
     }
 }

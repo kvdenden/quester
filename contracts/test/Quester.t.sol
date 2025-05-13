@@ -127,7 +127,7 @@ contract QuesterTest is Test {
 
     // Claim reward
     vm.prank(user);
-    quester.claimReward(questId, submissionId);
+    quester.claimReward(questId, submissionId, '');
 
     // Verify quest state
     Quester.Quest memory quest = quester.getQuest(questId);
@@ -153,7 +153,7 @@ contract QuesterTest is Test {
 
     // Should revert with "Quest does not exist"
     vm.expectRevert("Quest does not exist");
-    quester.claimReward(nonExistentQuestId, submissionId);
+    quester.claimReward(nonExistentQuestId, submissionId, '');
   }
 
   function test_ClaimReward_SubmissionLimitReached() public {
@@ -171,12 +171,12 @@ contract QuesterTest is Test {
 
     // First claim should succeed
     vm.prank(user1);
-    quester.claimReward(questId, keccak256("submission1"));
+    quester.claimReward(questId, keccak256("submission1"), '');
 
     // Second claim should fail
     vm.prank(user2);
     vm.expectRevert("Quest submission limit reached");
-    quester.claimReward(questId, keccak256("submission2"));
+    quester.claimReward(questId, keccak256("submission2"), '');
   }
 
   function test_ClaimReward_DuplicateSubmission() public {
@@ -194,12 +194,12 @@ contract QuesterTest is Test {
 
     // First claim should succeed
     vm.prank(user);
-    quester.claimReward(questId, submissionId);
+    quester.claimReward(questId, submissionId, '');
 
     // Second claim with same submission ID should fail
     vm.prank(user);
     vm.expectRevert("Submission already claimed");
-    quester.claimReward(questId, submissionId);
+    quester.claimReward(questId, submissionId, '');
   }
 
   function test_ClaimReward_InvalidSubmission() public {
@@ -218,7 +218,7 @@ contract QuesterTest is Test {
     // Claim should fail due to invalid submission
     vm.prank(user);
     vm.expectRevert("Submission is invalid");
-    quester.claimReward(questId, submissionId);
+    quester.claimReward(questId, submissionId, '');
   }
 
   // Helper functions

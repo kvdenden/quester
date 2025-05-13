@@ -7,6 +7,8 @@ import "../src/TrustedValidator.sol";
 contract TrustedValidatorTest is Test {
     TrustedValidator validator;
     address trustedAddress;
+    uint256 trustedKey;
+
     address user;
     address nonTrustedAddress;
 
@@ -14,7 +16,8 @@ contract TrustedValidatorTest is Test {
     bytes32 submissionId;
 
     function setUp() public {
-        trustedAddress = makeAddr("trusted");
+        (trustedAddress, trustedKey) = makeAddrAndKey("trusted");
+
         user = makeAddr("user");
         nonTrustedAddress = makeAddr("nonTrusted");
 
@@ -29,43 +32,41 @@ contract TrustedValidatorTest is Test {
     }
 
     function test_ValidateSubmission() public {
-        vm.prank(trustedAddress);
-        validator.validateSubmission(questId, submissionId, user);
+        bytes memory signature = _generateSignature(questId, submissionId, user);
 
-        assertTrue(validator.validate(questId, submissionId, user));
-    }
-
-    function test_NonTrustedCannotValidate() public {
-        vm.prank(nonTrustedAddress);
-        vm.expectRevert("Only trusted address can call this function");
-        validator.validateSubmission(questId, submissionId, user);
+        assertTrue(validator.validate(questId, submissionId, user, signature));
     }
 
     function test_UnvalidatedSubmission() public {
-        assertFalse(validator.validate(questId, submissionId, user));
+        assertFalse(validator.validate(questId, submissionId, user, ''));
     }
 
     function test_DifferentSubmissionNotValidated() public {
-        vm.prank(trustedAddress);
-        validator.validateSubmission(questId, submissionId, user);
+        bytes memory signature = _generateSignature(questId, submissionId, user);
 
         bytes32 differentSubmissionId = keccak256("differentSubmission");
-        assertFalse(validator.validate(questId, differentSubmissionId, user));
+        assertFalse(validator.validate(questId, differentSubmissionId, user, signature));
     }
 
     function test_DifferentUserNotValidated() public {
-        vm.prank(trustedAddress);
-        validator.validateSubmission(questId, submissionId, user);
+        bytes memory signature = _generateSignature(questId, submissionId, user);
 
         address differentUser = makeAddr("differentUser");
-        assertFalse(validator.validate(questId, submissionId, differentUser));
+        assertFalse(validator.validate(questId, submissionId, differentUser, signature));
     }
 
     function test_DifferentQuestNotValidated() public {
-        vm.prank(trustedAddress);
-        validator.validateSubmission(questId, submissionId, user);
+        bytes memory signature = _generateSignature(questId, submissionId, user);
 
         bytes32 differentQuestId = keccak256("differentQuest");
-        assertFalse(validator.validate(differentQuestId, submissionId, user));
+        assertFalse(validator.validate(differentQuestId, submissionId, user, signature));
+    }
+
+    function _generateSignature(bytes32 questId_, bytes32 submissionId_, address user_) public view returns (bytes memory) {
+        bytes memory message = abi.encodePacked(questId_, submissionId_, user_);
+        bytes32 digest = MessageHashUtils.toEthSignedMessageHash(message);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(trustedKey, digest);
+        bytes memory signature = abi.encodePacked(r, s, v);
+        return signature;
     }
 }
