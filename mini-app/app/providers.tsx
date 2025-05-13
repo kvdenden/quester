@@ -8,11 +8,14 @@ import { AuthKitProvider } from "@farcaster/auth-kit";
 import { JsonRpcProvider } from "ethers";
 import { SessionProvider } from "next-auth/react";
 
+const url =
+  process.env.NEXTAUTH_URL || `https://${process.env.VERCEL_BRANCH_URL}`;
+
 const config = {
   relay: "https://relay.farcaster.xyz",
   rpcUrl: process.env.NEXT_PUBLIC_OPTIMISM_MAINNET_RPC,
   domain: "localhost:3000",
-  siweUri: "https://localhost:3000" + "/api/auth/login",
+  siweUri: url + "/api/auth/login",
   provider: new JsonRpcProvider(
     process.env.NEXT_PUBLIC_OPTIMISM_MAINNET_RPC,
     10,

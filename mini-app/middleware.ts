@@ -19,7 +19,8 @@ export default async function middleware(req: NextRequest) {
     req.nextUrl.pathname.includes("/api/auth/signout") ||
     req.nextUrl.pathname.includes("/api/auth/providers") ||
     req.nextUrl.pathname.includes("/api/auth/csrf") ||
-    req.nextUrl.pathname.includes("/api/auth/error")
+    req.nextUrl.pathname.includes("/api/auth/error") ||
+    req.nextUrl.pathname.includes("/api/user-data")
   ) {
     return NextResponse.next();
   }

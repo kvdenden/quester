@@ -43,7 +43,6 @@ const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         const csrfToken = req.body?.csrfToken;
-
         const appClient = createAppClient({
           ethereum: viemConnector(),
         });
@@ -96,8 +95,6 @@ const authOptions: NextAuthOptions = {
   },
   debug: process.env.NODE_ENV === "development",
 };
-
-console.log("authOptions", authOptions);
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
