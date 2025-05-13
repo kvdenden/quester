@@ -10,7 +10,7 @@ contract MockValidator is IValidator {
         validationResult = _validationResult;
     }
 
-    function validate(bytes32 /* questId */, bytes32 /* submissionId */, address /* user */) external view returns (bool) {
+    function validate(bytes32 /* questId */, bytes32 /* submissionId */, address /* user */, bytes calldata /* signature */) external view returns (bool) {
         return validationResult;
     }
 }
