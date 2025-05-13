@@ -101,15 +101,6 @@ export default function ProfileSheet() {
               </div>
               <div className="flex flex-col space-y-2 w-full">
                 <Button
-                  onClick={testMeEndpoint}
-                  size="sm"
-                  variant="outline"
-                  disabled={isLoading}
-                  className="w-full"
-                >
-                  {isLoading ? "Loading..." : "Test /api/me"}
-                </Button>
-                <Button
                   size="sm"
                   variant="outline"
                   onClick={() => signOut()}
@@ -120,6 +111,15 @@ export default function ProfileSheet() {
               </div>
             </div>
           )}
+          <Button
+            onClick={testMeEndpoint}
+            size="sm"
+            variant="outline"
+            disabled={isLoading}
+            className="w-full"
+          >
+            {isLoading ? "Loading..." : "Test /api/me"}
+          </Button>
         </div>
       </SheetContent>
     </Sheet>
