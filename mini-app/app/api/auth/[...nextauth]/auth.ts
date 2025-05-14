@@ -1,6 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createAppClient, viemConnector } from "@farcaster/auth-client";
+import { getPrimaryWallet } from "@/lib/wallet-manager";
 
 // Define custom session type
 declare module "next-auth" {
@@ -10,7 +11,15 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
+      primaryWallet?: string | null;
     };
+  }
+
+  interface User {
+    id: string;
+    name?: string | null;
+    image?: string | null;
+    primaryWallet?: string | null;
   }
 }
 
@@ -58,10 +67,14 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        // Get the primary wallet for the user
+        const primaryWallet = await getPrimaryWallet(fid.toString());
+
         return {
           id: fid.toString(),
           name: credentials?.name,
           image: credentials?.pfp,
+          primaryWallet: primaryWallet?.address || null,
         };
       },
     }),
@@ -76,6 +89,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.name = user.name;
         token.picture = user.image;
+        token.primaryWallet = user.primaryWallet;
       }
       return token;
     },
@@ -84,6 +98,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.name = token.name;
         session.user.image = token.picture;
+        session.user.primaryWallet = token.primaryWallet as string | null;
       }
       return session;
     },

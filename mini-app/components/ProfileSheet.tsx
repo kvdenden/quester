@@ -18,11 +18,14 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAccount } from "wagmi";
+import { USDCApprovalButton } from "./USDCApprovalButton";
 
 export default function ProfileSheet() {
   const { data: session } = useSession();
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { address, chain } = useAccount();
 
   const getNonce = useCallback(async () => {
     const nonce = await getCsrfToken();
@@ -98,6 +101,10 @@ export default function ProfileSheet() {
                 <p className="text-sm text-muted-foreground">
                   @{session.user.name}
                 </p>
+                <p className="text-sm text-muted-foreground">
+                  {address?.slice(0, 6)}...{address?.slice(-4)}
+                </p>
+                <p className="text-sm text-muted-foreground">{chain?.name}</p>
               </div>
               <div className="flex flex-col space-y-2 w-full">
                 <Button
@@ -108,6 +115,7 @@ export default function ProfileSheet() {
                 >
                   Sign Out
                 </Button>
+                <USDCApprovalButton />
               </div>
             </div>
           )}
