@@ -11,7 +11,8 @@
     "services:stop": "sh services/scripts/stop.sh",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "generate-abi": "wagmi generate"
   },
   "dependencies": {
     "@coinbase/onchainkit": "latest",
@@ -57,6 +58,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@wagmi/cli": "^2.3.1",
     "dotenv": "^16.5.0",
     "drizzle-kit": "^0.31.1",
     "eslint": "^8",
