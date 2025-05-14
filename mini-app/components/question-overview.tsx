@@ -1,18 +1,25 @@
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { SurveyQuestion as SurveyQuestionType } from "@/components/survey-question";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useState } from "react";
+import { SurveyQuestion } from "@/components/survey-question";
 
 export interface QuestionOverviewProps {
   questions: SurveyQuestionType[];
   onDeleteQuestion: (index: number) => void;
   onComplete: () => void;
+  onUpdateQuestion: (index: number, question: SurveyQuestionType) => void;
 }
 
 export function QuestionOverview({
   questions,
   onDeleteQuestion,
+  onUpdateQuestion,
 }: QuestionOverviewProps) {
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
   const getQuestionTypeLabel = (type: string) => {
     switch (type) {
       case "multiple-choice":
@@ -26,10 +33,21 @@ export function QuestionOverview({
     }
   };
 
+  const handleEdit = (index: number) => {
+    setEditingIndex(index);
+  };
+
+  const handleUpdateQuestion = (question: SurveyQuestionType) => {
+    if (editingIndex !== null) {
+      onUpdateQuestion(editingIndex, question);
+      setEditingIndex(null);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {questions.map((question, index) => (
-        <div key={index} className="p-4 border rounded-lg">
+        <div key={index} className="p-4 border bg-card rounded-lg">
           <div className="flex items-start gap-2">
             <div className="flex-1 min-w-0">
               <div className="font-bold text-foreground break-words">
@@ -41,13 +59,22 @@ export function QuestionOverview({
                 </div>
               )}
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onDeleteQuestion(index)}
-            >
-              <Trash2 className="text-muted-foreground" />
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleEdit(index)}
+              >
+                <Pencil className="h-4 w-4 text-muted-foreground" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onDeleteQuestion(index)}
+              >
+                <Trash2 className="text-muted-foreground" />
+              </Button>
+            </div>
           </div>
           <div className="flex gap-2 items-start mt-4">
             {question.answerType === "text" && (
@@ -85,6 +112,21 @@ export function QuestionOverview({
           </div>
         </div>
       ))}
+
+      <Dialog
+        open={editingIndex !== null}
+        onOpenChange={() => setEditingIndex(null)}
+      >
+        <DialogContent className="max-w-sm bg-background">
+          {editingIndex !== null && (
+            <SurveyQuestion
+              initialQuestion={questions[editingIndex]}
+              onNext={handleUpdateQuestion}
+              isEditing={true}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
