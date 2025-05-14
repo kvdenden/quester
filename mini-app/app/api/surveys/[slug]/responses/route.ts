@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { responses, surveys } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
-import { getUser } from "@/lib/auth";
+import { findOrCreateUser } from "@/lib/auth";
 // Schema for survey creation
 const responseSchema = z.object({
   answers: z.array(z.string()),
@@ -67,9 +67,15 @@ export async function POST(
 
     const surveyId = survey.id;
 
+    const user = await findOrCreateUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = user.id;
+
     const body = await request.json();
     const { answers, submissionId } = responseSchema.parse(body);
-    const { id: userId } = await getUser();
 
     const existingResponse = await db.query.responses.findFirst({
       where: and(

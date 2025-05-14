@@ -2,13 +2,17 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { surveys } from "@/db/schema";
-import { getUser } from "@/lib/auth";
+import { findUser } from "@/lib/auth";
 
 export async function GET() {
   try {
-    const { id: userId } = await getUser();
+    const user = await findUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const rows = await db.query.surveys.findMany({
-      where: eq(surveys.userId, userId),
+      where: eq(surveys.userId, user.id),
     });
 
     return NextResponse.json({
