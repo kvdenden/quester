@@ -4,7 +4,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { surveys } from "@/db/schema";
-import { getUser } from "@/lib/auth";
+import { findOrCreateUser } from "@/lib/auth";
 
 // Schema for survey creation
 const surveySchema = z.object({
@@ -43,9 +43,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const user = await findOrCreateUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const userId = user.id;
+
     const body = await request.json();
     const { title, questions, questId } = surveySchema.parse(body);
-    const { id: userId } = await getUser();
 
     // Generate a unique slug
     const slug = nanoid(10);
